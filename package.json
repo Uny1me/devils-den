@@ -1,0 +1,19 @@
+{
+  "name": "devils-den",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Devil’s Plan-style game night: rooms, Cube Count, Memory Poker",
+  "scripts": {
+    "start": "node server/index.js",
+    "dev": "node --watch server/index.js",
+    "test": "node --test \"test/**/*.test.js\""
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "ws": "^8.23.0"
+  },
+  "main": "server/index.js"
+}

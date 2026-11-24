@@ -1,0 +1,1248 @@
+<title>Devil's Den Blueprint</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap">
+<style>
+/* Layout: three-pane "lesson" — parts list · isometric stage with stepper · step notes. Paper, ink outlines, hard offset shadows. */
+:root {
+  --paper: #f4ebe0; --sheet: #f9f2e8; --card: #f8f0e6; --line: #ddd3c5; --line-strong: #c6bbac;
+  --ink: #1d1b18; --ink-2: #34302b; --muted: #6f6961; --drop: #1d1b18;
+  --green: #cfe3b2; --green-2: #7fc278; --violet: #e7ddf5; --orange: #fcdcbd; --blue: #c4dcf3;
+  --yellow: #f6df97; --rose: #f6cad0; --stone: #e6dccd; --red: #d0563a;
+  --grid: rgba(70, 65, 59, .10); --glow: #6cb85f; --char-ink: #1d1b18;
+  --font: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #181613; --sheet: #211e1a; --card: #1f1c18; --line: #39342d; --line-strong: #4b453d;
+    --ink: #efe6d9; --ink-2: #d9cfc1; --muted: #a2998c; --drop: #000;
+    --green: #4f6b3b; --green-2: #8fcf7f; --violet: #574a70; --orange: #7f5333; --blue: #37536f;
+    --yellow: #7a6628; --rose: #74404a; --stone: #4a433a; --red: #e0714f;
+    --grid: rgba(239, 230, 217, .07); --glow: #8fcf7f; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #181613; --sheet: #211e1a; --card: #1f1c18; --line: #39342d; --line-strong: #4b453d;
+  --ink: #efe6d9; --ink-2: #d9cfc1; --muted: #a2998c; --drop: #000;
+  --green: #4f6b3b; --green-2: #8fcf7f; --violet: #574a70; --orange: #7f5333; --blue: #37536f;
+  --yellow: #7a6628; --rose: #74404a; --stone: #4a433a; --red: #e0714f;
+  --grid: rgba(239, 230, 217, .07); --glow: #8fcf7f; color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--font); font-size: 13px; line-height: 1.55; }
+button { font-family: inherit; color: inherit; }
+code { font-family: var(--font); background: var(--paper); border: 1px solid var(--line); border-radius: 5px; padding: 0 5px; font-size: .92em; }
+:focus-visible { outline: 2px solid var(--green-2); outline-offset: 2px; }
+
+.top { display: flex; align-items: center; gap: 14px; padding-block: 12px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); border-bottom: 1px solid var(--line); }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 17px; letter-spacing: -.01em; }
+.brand mark { background: var(--green); color: var(--ink); padding: 0 4px; border-radius: 3px; }
+.chip { font-size: 11px; font-weight: 600; border: 1.2px solid var(--ink); border-radius: 999px; padding: 2px 10px; background: var(--violet); box-shadow: 1px 1.5px 0 var(--drop); white-space: nowrap; }
+.spacer { flex: 1; }
+.iconbtn { border: 1.2px solid var(--line-strong); background: var(--sheet); border-radius: 8px; width: 34px; height: 34px; display: grid; place-items: center; cursor: pointer; }
+.iconbtn:hover { border-color: var(--ink); }
+
+.app { display: grid; grid-template-columns: 250px minmax(0, 1fr) 300px; gap: 14px; padding-block: 14px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); align-items: start; }
+
+/* parts list */
+.nav { display: flex; flex-direction: column; gap: 4px; }
+.nav h2 { display: flex; justify-content: space-between; align-items: center; font-size: 14px; margin: 4px 6px 8px; }
+.nav h2 small { color: var(--muted); font-weight: 500; font-size: 11px; }
+.part { display: flex; align-items: center; gap: 10px; padding: 8px 10px; border-radius: 8px; border: 1.2px solid transparent; background: none; cursor: pointer; text-align: left; font-size: 13px; font-weight: 500; width: 100%; }
+.part:hover { background: var(--sheet); border-color: var(--line); }
+.part[aria-current="true"] { background: var(--green); border-color: var(--ink); box-shadow: 1.5px 2.5px 0 var(--drop); font-weight: 700; }
+.part .n { color: var(--muted); font-size: 11px; margin-left: auto; font-variant-numeric: tabular-nums; }
+.part[aria-current="true"] .n { color: var(--ink-2); }
+.folder { width: 18px; height: 14px; border-radius: 2px 3px 3px 3px; border: 1.2px solid var(--ink); position: relative; flex: none; }
+.folder::before { content: ""; position: absolute; left: -1.2px; top: -5px; width: 8px; height: 4px; border: 1.2px solid var(--ink); border-bottom: 0; border-radius: 2px 2px 0 0; background: inherit; }
+.navnote { margin: 14px 6px 0; padding: 12px; border: 1px dashed var(--line-strong); border-radius: 10px; color: var(--muted); font-size: 11.5px; }
+
+/* stage */
+.main { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.crumbs { color: var(--muted); font-size: 12px; }
+.headrow { display: flex; flex-wrap: wrap; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.headrow h1 { font-size: clamp(22px, 3vw, 30px); line-height: 1.15; margin: 4px 0 4px; letter-spacing: -.02em; text-wrap: balance; }
+.headrow p { margin: 0; color: var(--muted); max-width: 62ch; }
+.tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.tags .chip:nth-child(1) { background: var(--orange); }
+.tags .chip:nth-child(2) { background: var(--green); }
+.stagewrap { border: 1px solid var(--line); border-radius: 12px; background: var(--sheet); overflow: hidden; position: relative; }
+.stats { display: flex; flex-wrap: wrap; gap: 8px; padding: 10px; }
+.stat { border: 1px solid var(--line-strong); background: var(--card); border-radius: 8px; padding: 6px 10px; min-width: 100px; }
+.stat b { display: block; font-size: 15px; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 10px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+svg.stage { display: block; width: 100%; height: auto; }
+.legend { display: flex; gap: 14px; flex-wrap: wrap; padding: 0 12px 10px; font-size: 11px; color: var(--muted); }
+.legend i { display: inline-block; width: 9px; height: 9px; border-radius: 50%; border: 1.2px solid var(--ink); margin-right: 5px; vertical-align: -1px; }
+
+.stepper { border: 1px solid var(--line); border-radius: 12px; background: var(--sheet); padding: 10px 12px 12px; }
+.stepper header { display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; }
+.stepper header span { color: var(--muted); font-weight: 500; text-transform: none; letter-spacing: 0; }
+.dots { display: flex; overflow-x: auto; padding-bottom: 4px; }
+.dot { flex: 1 0 76px; display: flex; flex-direction: column; align-items: center; gap: 4px; background: none; border: 0; cursor: pointer; position: relative; padding: 2px 0; font-size: 10.5px; color: var(--muted); }
+.dot::before { content: ""; position: absolute; top: 15px; left: -50%; right: 50%; height: 2px; background: var(--line-strong); z-index: 0; }
+.dot:first-child::before { display: none; }
+.dot.done::before, .dot.cur::before { background: var(--ink); }
+.dot b { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; border: 1.2px solid var(--ink-2); background: var(--sheet); font-size: 11px; position: relative; z-index: 1; color: var(--ink); }
+.dot.done b { background: var(--green); }
+.dot.cur b { background: var(--green); box-shadow: 0 0 0 4px color-mix(in oklab, var(--green-2) 40%, transparent); font-weight: 800; }
+.dot.cur { color: var(--ink); font-weight: 700; }
+
+/* notes */
+.side { display: flex; flex-direction: column; gap: 14px; }
+.panel { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 16px; }
+.stephead { display: flex; justify-content: space-between; align-items: center; font-size: 11px; font-weight: 700; letter-spacing: .06em; }
+.tag { font-size: 10px; letter-spacing: .08em; font-weight: 700; border: 1.2px solid var(--ink); border-radius: 999px; padding: 2px 9px; }
+.tag.CONCEPT { background: var(--violet); } .tag.PROBLEM { background: var(--rose); } .tag.TECHNIQUE { background: var(--blue); }
+.tag.TRADE-OFF { background: var(--orange); } .tag.DECISION { background: var(--yellow); } .tag.RECAP { background: var(--green); }
+.panel h3 { font-size: 17px; line-height: 1.3; margin: 10px 0 8px; text-wrap: balance; }
+.body p { margin: 0 0 10px; color: var(--ink-2); }
+.body ul { margin: 0 0 10px; padding-left: 18px; color: var(--ink-2); }
+.body li { margin-bottom: 4px; }
+.key { background: var(--violet); border: 1px solid color-mix(in oklab, var(--ink) 25%, transparent); border-radius: 10px; padding: 10px 12px; display: grid; grid-template-columns: 26px 1fr; gap: 8px; margin-top: 4px; }
+.key small { display: block; font-size: 10px; font-weight: 700; letter-spacing: .08em; color: var(--ink-2); }
+.key .ki { width: 24px; height: 24px; border: 1.2px solid var(--ink); border-radius: 6px; background: var(--sheet); display: grid; place-items: center; font-weight: 800; font-size: 12px; }
+.navbtns { display: flex; gap: 8px; margin-top: 16px; }
+.btn { border: 1.2px solid var(--ink); border-radius: 8px; background: var(--sheet); padding: 8px 12px; font-weight: 600; font-size: 12.5px; cursor: pointer; box-shadow: inset 0 1px 0 rgba(255,255,255,.5), 1.5px 2.5px 0 var(--drop); display: inline-flex; align-items: center; gap: 8px; justify-content: center; }
+.btn.primary { background: var(--green); flex: 1; justify-content: space-between; }
+.btn:active { transform: translate(1px, 1.5px); box-shadow: none; }
+.btn:disabled { opacity: .45; cursor: default; box-shadow: none; }
+.hint { text-align: center; color: var(--muted); font-size: 10.5px; margin-top: 8px; }
+kbd { font-family: var(--font); font-size: 10px; border: 1px solid var(--line-strong); border-radius: 4px; padding: 0 4px; background: var(--sheet); }
+.decide h4 { font-size: 11px; letter-spacing: .08em; margin: 0 0 10px; }
+.decide label { display: flex; gap: 9px; align-items: flex-start; font-size: 12px; color: var(--ink-2); padding: 4px 0; cursor: pointer; }
+.decide input { accent-color: var(--green-2); margin-top: 3px; }
+
+/* svg pieces */
+.edge { fill: none; stroke: var(--ink); stroke-width: 2.4; stroke-linejoin: round; }
+.seam { fill: none; stroke: var(--ink); stroke-width: 1.4; stroke-linejoin: round; opacity: .85; }
+.f-top { fill: color-mix(in oklab, var(--h) 62%, #fff); }
+.f-left { fill: var(--h); }
+.f-right { fill: color-mix(in oklab, var(--h) 82%, #000); }
+.lbl { fill: var(--ink); font-family: var(--font); font-weight: 800; text-anchor: middle; }
+.sub { fill: var(--ink-2); font-family: var(--font); font-weight: 500; text-anchor: middle; }
+.pbody { fill: var(--sheet); stroke: var(--ink); stroke-width: 2; }
+.pdrop { fill: var(--drop); }
+.ptext { fill: var(--ink); font-family: var(--font); font-weight: 700; text-anchor: middle; }
+.arrow { fill: none; stroke: var(--ink); stroke-width: 2.2; stroke-linecap: round; }
+.arrow.dashed { stroke-dasharray: 6 6; opacity: .7; }
+.arrow.bad { stroke: var(--red); }
+.lead { stroke: var(--ink); stroke-width: 1.4; stroke-dasharray: 3 4; fill: none; }
+.vision { fill: color-mix(in oklab, var(--green-2) 22%, transparent); stroke: var(--glow); stroke-width: 2; stroke-dasharray: 7 6; }
+.vision.devil { fill: color-mix(in oklab, var(--red) 16%, transparent); stroke: var(--red); }
+.pk-req { fill: #ef9a52; stroke: var(--ink); stroke-width: 1.5; }
+.pk-res { fill: #7fc278; stroke: var(--ink); stroke-width: 1.5; }
+.ico { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.stage.spinning { cursor: grab; touch-action: pan-y; user-select: none; -webkit-user-select: none; }
+.stage.spinning:active { cursor: grabbing; }
+[data-spin]:focus-visible .pbody { stroke: var(--green-2); stroke-width: 3; }
+.small .edge { stroke-width: 1.7; }
+.small .seam { stroke-width: 1; }
+.phasehdr { font-size: 10.5px; font-weight: 700; letter-spacing: .08em; color: var(--muted); margin: 12px 6px 2px; text-transform: uppercase; }
+.phasehdr:first-child { margin-top: 0; }
+.chr * { stroke: var(--char-ink); stroke-width: 2.2; vector-effect: non-scaling-stroke; stroke-linejoin: round; }
+.chr .shadow { stroke: none; fill: rgba(0,0,0,.16); }
+.el { transition: opacity .35s ease; }
+.el.dim { opacity: .18; }
+.el.hi { filter: drop-shadow(0 0 1px var(--glow)) drop-shadow(0 0 9px var(--glow)); }
+.el.enter { animation: pop .5s cubic-bezier(.2,.9,.3,1.3) both; transform-box: fill-box; transform-origin: 50% 100%; }
+@keyframes pop { from { opacity: 0; transform: translateY(10px) scale(.94); } to { opacity: 1; transform: none; } }
+.walk { animation: bob .5s ease-in-out infinite alternate; }
+.walk .l1 { animation: step .5s ease-in-out infinite alternate; }
+.walk .l2 { animation: step .5s ease-in-out infinite alternate-reverse; }
+@keyframes bob { from { transform: translateY(0); } to { transform: translateY(-2.5px); } }
+@keyframes step { from { transform: translateY(0); } to { transform: translateY(-3px); } }
+.float { animation: float 2.2s ease-in-out infinite alternate; }
+@keyframes float { from { transform: translateY(0); } to { transform: translateY(-7px); } }
+@media (prefers-reduced-motion: reduce) {
+  .el.enter, .walk, .walk .l1, .walk .l2, .float { animation: none; }
+}
+
+@media (max-width: 1180px) {
+  .app { grid-template-columns: 210px minmax(0, 1fr); }
+  .side { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); }
+}
+@media (max-width: 760px) {
+  .app { grid-template-columns: minmax(0, 1fr); }
+  .nav { flex-direction: row; overflow-x: auto; padding-bottom: 6px; }
+  .nav h2, .navnote, .phasehdr { display: none; }
+  .part { width: auto; white-space: nowrap; flex: none; }
+  .part .n { display: none; }
+  .side { grid-template-columns: minmax(0, 1fr); }
+  .main { padding: 12px; }
+  .top .chip { display: none; }
+}
+</style>
+
+<header class="top">
+  <div class="brand">
+    <svg width="30" height="30" viewBox="-20 -24 40 44" aria-hidden="true">
+      <path d="M0 -20 L17 -11 L17 8 L0 17 L-17 8 L-17 -11 Z" fill="var(--rose)" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round"/>
+      <path d="M-17 -11 L0 -2 L17 -11 M0 -2 L0 17" fill="none" stroke="var(--ink)" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M-8 -18 L-11 -27 L-4 -20 M8 -18 L11 -27 L4 -20" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
+    </svg>
+    <span>Devil's <mark>Den</mark></span>
+  </div>
+  <span class="chip">game blueprint · v0.2</span>
+  <div class="spacer"></div>
+  <button class="iconbtn" id="theme" aria-label="Switch light or dark theme" title="Switch theme">
+    <svg width="16" height="16" viewBox="0 0 24 24" class="ico" aria-hidden="true" style="stroke:var(--ink)"><path d="M20 14.5A8 8 0 1 1 9.5 4a6.5 6.5 0 0 0 10.5 10.5Z"/></svg>
+  </button>
+</header>
+
+<div class="app">
+  <nav class="nav" aria-label="Blueprint parts">
+    <h2>Blueprint <small id="partcount"></small></h2>
+    <div id="parts" style="display:contents"></div>
+    <div class="navnote">Planning document. Nothing here is final. Tick the decisions on the right as we settle them.</div>
+  </nav>
+
+  <main class="main">
+    <div>
+      <div class="crumbs" id="crumbs"></div>
+      <div class="headrow">
+        <div>
+          <h1 id="title"></h1>
+          <p id="summary"></p>
+        </div>
+        <div class="tags" id="tags"></div>
+      </div>
+    </div>
+    <div class="stagewrap">
+      <div class="stats" id="stats"></div>
+      <svg class="stage" id="stage" viewBox="-480 -290 960 580" role="img" aria-label="Diagram for the current step"></svg>
+      <div class="legend" id="legend"></div>
+    </div>
+    <section class="stepper" aria-label="Steps in this part">
+      <header>In this part <span id="stepof"></span></header>
+      <div class="dots" id="dots"></div>
+    </section>
+  </main>
+
+  <aside class="side">
+    <section class="panel" aria-live="polite">
+      <div class="stephead"><span id="stepno"></span><span class="tag" id="tag"></span></div>
+      <h3 id="steptitle"></h3>
+      <div class="body" id="stepbody"></div>
+      <div class="navbtns">
+        <button class="btn" id="back"><span aria-hidden="true">←</span> Back</button>
+        <button class="btn primary" id="next"><span id="nextlabel">Next</span><span aria-hidden="true">→</span></button>
+      </div>
+      <div class="hint"><kbd>←</kbd> <kbd>→</kbd> step</div>
+    </section>
+    <section class="panel decide">
+      <h4>DECISIONS FOR THIS PART</h4>
+      <div id="decisions"></div>
+    </section>
+  </aside>
+</div>
+
+<script>
+(() => {
+/* ---------- palette for characters (game art, same in both themes) ---------- */
+const SHIRTS = ['#e8604c','#4a90d9','#5cb85c','#f0c419','#9b6fd1','#ef8a3c','#2bb3a0','#f2efe9','#f27db0','#8d6e63','#8e99a6','#3fd0e0'];
+const SKIN = ['#f6d7bb','#e9b994','#c98d63','#94603f','#5e3b27'];
+const HAIRC = ['#3a2a20','#1f1c1a','#e1b659','#c4622d','#a39e95','#e58fb1'];
+const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function shade(hex, amt) { // amt < 0 darkens toward black
+  const n = parseInt(hex.slice(1), 16); let r = n >> 16, g = (n >> 8) & 255, b = n & 255;
+  const t = amt < 0 ? 0 : 255, p = Math.abs(amt);
+  r = Math.round(r + (t - r) * p); g = Math.round(g + (t - g) * p); b = Math.round(b + (t - b) * p);
+  return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
+
+/* ---------- drawing primitives ---------- */
+function prism(x, y, a, h, hue, b = a / 2) {
+  const top = `M${x} ${y-h-b} L${x+a} ${y-h} L${x} ${y-h+b} L${x-a} ${y-h} Z`;
+  const left = `M${x-a} ${y-h} L${x} ${y-h+b} L${x} ${y+b} L${x-a} ${y} Z`;
+  const right = `M${x+a} ${y-h} L${x} ${y-h+b} L${x} ${y+b} L${x+a} ${y} Z`;
+  const out = `M${x} ${y-h-b} L${x+a} ${y-h} L${x+a} ${y} L${x} ${y+b} L${x-a} ${y} L${x-a} ${y-h} Z`;
+  return `<g style="--h:var(--${hue})"><path class="f-left" d="${left}"/><path class="f-right" d="${right}"/><path class="f-top" d="${top}"/>
+    <path class="seam" d="M${x-a} ${y-h} L${x} ${y-h+b} L${x+a} ${y-h} M${x} ${y-h+b} L${x} ${y+b}"/><path class="edge" d="${out}"/></g>`;
+}
+// prism from a rectangle footprint, projected with iso()
+function boxRect(iso, r, h, hue) {
+  const A = iso(r.x, r.y), B = iso(r.x + r.w, r.y), C = iso(r.x + r.w, r.y + r.h), D = iso(r.x, r.y + r.h);
+  const up = p => [p[0], p[1] - h];
+  const pts = a => a.map(p => p.join(' ')).join(' L');
+  const top = `M${pts([up(A), up(B), up(C), up(D)])} Z`;
+  const left = `M${pts([up(D), up(C), C, D])} Z`;
+  const right = `M${pts([up(B), up(C), C, B])} Z`;
+  return `<g style="--h:var(--${hue})"><path class="f-left" d="${left}"/><path class="f-right" d="${right}"/><path class="f-top" d="${top}"/>
+    <path class="seam" d="M${pts([up(D), up(C), up(B)])} M${pts([up(C), C])}"/>
+    <path class="edge" d="M${pts([up(A), up(B), B, C, D, up(D)])} Z"/></g>`;
+}
+function pill(x, y, text, o = {}) {
+  const fs = o.fs || 13.5, w = text.length * fs * 0.6 + 26, h = fs + 15;
+  const fill = o.tone ? `style="fill:var(--${o.tone})"` : '';
+  return `<g><rect class="pdrop" x="${x - w/2 + 1.5}" y="${y - h/2 + 2.5}" width="${w}" height="${h}" rx="${h/2}"/>
+    <rect class="pbody" ${fill} x="${x - w/2}" y="${y - h/2}" width="${w}" height="${h}" rx="${h/2}"/>
+    <text class="ptext" x="${x}" y="${y + fs * 0.36}" font-size="${fs}">${esc(text)}</text></g>`;
+}
+const ICONS = {
+  server: 'M-10 -9 h20 v7 h-20 Z M-10 2 h20 v7 h-20 Z M-6 -5.5 h.1 M-6 5.5 h.1',
+  file: 'M-7 -10 h9 l5 5 v15 h-14 Z M2 -10 v5 h5',
+  coin: 'M0 -10 a10 10 0 1 0 .1 0 Z M0 -5 v10 M-3 -2.5 h5 a2.5 2.5 0 0 1 0 5 h-5',
+  eye: 'M-11 0 C-6 -8 6 -8 11 0 C6 8 -6 8 -11 0 Z M0 -3.5 a3.5 3.5 0 1 0 .1 0 Z',
+  chat: 'M-10 -8 h20 v12 h-11 l-5 5 v-5 h-4 Z',
+  vote: 'M-9 -2 h18 v11 h-18 Z M-4 -5 l3 3 l6 -8',
+  flag: 'M-7 10 V-10 M-7 -9 h14 l-3 5 l3 5 h-14',
+  play: 'M-6 -9 L9 0 L-6 9 Z',
+  users: 'M-4 -6 a4 4 0 1 0 .1 0 Z M-11 9 c0 -6 3 -8 7 -8 s7 2 7 8 M6 -8 a3.5 3.5 0 1 0 .1 0 M7 1 c3 0 5 2 5 7',
+  bolt: 'M2 -11 L-6 2 h6 l-2 9 l8 -13 h-6 Z',
+  mask: 'M-10 -6 C-4 -9 4 -9 10 -6 C10 4 5 9 0 9 C-5 9 -10 4 -10 -6 Z M-5 -1 h3 M2 -1 h3',
+  trophy: 'M-6 -9 h12 v5 a6 6 0 0 1 -12 0 Z M-6 -6 h-4 a4 4 0 0 0 4 5 M6 -6 h4 a4 4 0 0 1 -4 5 M0 2 v5 M-5 9 h10',
+  cube: 'M0 -10 L9 -5 L9 5 L0 10 L-9 5 L-9 -5 Z M-9 -5 L0 0 L9 -5 M0 0 V10',
+  cards: 'M-10 -7 h10 v15 h-10 Z M2 -9 l8 2 l-3.5 14.5 l-5 -1.2',
+  plus: 'M0 -8 V8 M-8 0 H8',
+};
+const icon = (name, x, y, s = 1) => `<path class="ico" transform="translate(${x} ${y}) scale(${s})" d="${ICONS[name]}"/>`;
+
+/* ---------- characters: human, blank face, chunky body ---------- */
+const HAIR_CROP = 'M-15.5 -51 C-16 -66 -7 -71 0 -71 C7 -71 16 -66 15.5 -51 C11 -57 5 -60 -1 -59 C-7 -58 -12 -55 -15.5 -51 Z';
+const HAIR = {
+  crop:  { front: HAIR_CROP },
+  bob:   { front: 'M-17.5 -41 C-19 -62 -10 -71 0 -71 C10 -71 19 -62 17.5 -41 C14.5 -41 12 -43 12 -47 L12 -55 C6 -59 -6 -59 -12 -55 L-12 -47 C-12 -43 -14.5 -41 -17.5 -41 Z' },
+  bun:   { back: '<circle cx="0" cy="-73" r="7"/>', front: HAIR_CROP },
+  spiky: { front: 'M-15.5 -50 L-17 -62 L-10.5 -60.5 L-9 -72 L-3 -66 L2 -76 L6 -66.5 L12.5 -71 L12 -62 L17.5 -61 L15.5 -50 C10 -57 -9 -58 -15.5 -50 Z' },
+  long:  { back: '<rect x="-18.5" y="-69" width="37" height="44" rx="16"/>', front: 'M-15.5 -49 C-16 -66 -7 -71 0 -71 C7 -71 16 -66 15.5 -49 C12 -55 6 -59.5 0 -62 C-6 -59.5 -12 -55 -15.5 -49 Z' },
+  afro:  { back: '<circle cx="0" cy="-58" r="21.5"/>', front: 'M-14.5 -54 C-13 -62 -7 -64 -3.5 -60 C-1 -65 6 -65 8 -60 C11 -63 16 -60 14.5 -54 C8 -58.5 -8 -58.5 -14.5 -54 Z' },
+};
+function charSVG(o) {
+  const s = o.s || 1, sh = o.shirt || SHIRTS[1], sk = o.skin || SKIN[0], hc = o.hc || HAIRC[0];
+  const st = o.state || 'idle', ex = o.explode || 0, hs = HAIR[o.hair || 'crop'];
+  const legs = st === 'ghost' ? '' : `<g transform="translate(0 ${ex * 2.2})">
+      <rect class="l1" x="-12" y="-13" width="9.5" height="13" rx="4" fill="${shade(sh, -0.38)}"/>
+      <rect class="l2" x="2.5" y="-13" width="9.5" height="13" rx="4" fill="${shade(sh, -0.38)}"/></g>`;
+  const body = `<g transform="translate(0 ${ex * 1.1})">
+      <rect x="-21" y="-37" width="8.5" height="19" rx="4.2" fill="${shade(sh, -0.14)}"/>
+      <rect x="12.5" y="-37" width="8.5" height="19" rx="4.2" fill="${shade(sh, -0.14)}"/>
+      <rect x="-16" y="-41" width="32" height="${st === 'ghost' ? 26 : 31}" rx="12" fill="${sh}"/></g>`;
+  const head = `<circle cx="0" cy="-54" r="15" fill="${sk}"/>`;
+  const horns = st === 'devil' ? `<path d="M-10 -66 L-15 -79 L-4 -69.5 Z M10 -66 L15 -79 L4 -69.5 Z" fill="#c8402f"/>` : '';
+  const hairBack = hs.back ? `<g transform="translate(0 ${-ex * 1.1})" fill="${hc}">${hs.back}</g>` : '';
+  const hairFront = `<g transform="translate(0 ${-ex * 1.1})"><path d="${hs.front}" fill="${hc}"/>${horns}</g>`;
+  let inner = `${hairBack}${legs}${body}${head}${hairFront}`;
+  let wrapAttr = '';
+  if (st === 'ghost') wrapAttr = ' opacity="0.5"';
+  if (st === 'dead') inner = `<g transform="translate(30 -16) rotate(-90)" style="filter:saturate(.35)">${inner}</g>`;
+  const anim = st === 'walk' ? 'walk' : st === 'ghost' ? 'float' : '';
+  const glow = st === 'devil' ? ' style="filter:drop-shadow(0 0 7px rgba(214,60,40,.75))"' : '';
+  const shadow = st === 'ghost' ? '' : `<ellipse class="shadow" cx="${st === 'dead' ? -6 : 0}" cy="0" rx="${st === 'dead' ? 44 : 20}" ry="6"/>`;
+  return `<g transform="translate(${o.x} ${o.y}) scale(${o.flip ? -s : s} ${s})" class="chr"${wrapAttr}${glow}>${shadow}<g class="${anim}">${inner}</g></g>`;
+}
+
+/* ---------- game night pieces: cube stacks, cards, phones, timing bars ---------- */
+const LAYER = ['blue', 'green', 'yellow', 'orange', 'rose'];
+function cubeStack(x0, y0, a, heights, o = {}) {
+  const h = a * 1.15, gap = o.explode || 0, list = [];
+  heights.forEach((row, j) => row.forEach((n, i) => { for (let k = 0; k < n; k++) list.push([i, j, k]); }));
+  list.sort((p, q) => (p[0] + p[1]) - (q[0] + q[1]) || p[2] - q[2]);
+  const hue = o.layers ? (k => LAYER[k]) : () => (o.hue || 'blue');
+  return `<g class="small">${list.map(([i, j, k]) => prism(x0 + (i - j) * a, y0 + (i + j) * a / 2 - k * (h + gap), a, h, hue(k))).join('')}</g>`;
+}
+/* a structure you can turn: rotate the heightmap around its middle, project each cube, draw back to front */
+const SPIN = [[1, 1, 1, 1, 1, 1], [1, 2, 2, 3, 2, 1], [1, 2, 4, 3, 2, 1], [1, 3, 3, 3, 2, 1], [1, 2, 2, 2, 1, 1], [1, 1, 1, 1, 1, 0]];
+const spin = { theta: Math.PI / 4, elev: Math.PI / 6 };
+const CUBE_GOLD = '#f2b630', CUBE_EDGE = '#6b4510';
+function spinSVG(H, theta, elev, S, cx, cy) {
+  const n = H.length, c = Math.cos(theta), s = Math.sin(theta), cE = Math.cos(elev), sE = Math.sin(elev), off = n / 2;
+  const has = (i, j, k) => i >= 0 && j >= 0 && i < n && j < n && k >= 0 && k < H[j][i];
+  const P = ([x, y, z]) => { const rx = x * c - y * s, ry = x * s + y * c; return [cx + rx * S, cy + (ry * sE - z * cE) * S]; };
+  const depth = (x, y, z) => (x * s + y * c) * cE + z * sE;
+  const cubes = [];
+  for (let j = 0; j < n; j++) for (let i = 0; i < n; i++) for (let k = 0; k < H[j][i]; k++) cubes.push([i, j, k]);
+  cubes.sort((A, B) => depth(A[0] + .5 - off, A[1] + .5 - off, A[2] + .5) - depth(B[0] + .5 - off, B[1] + .5 - off, B[2] + .5));
+  const face = (pts, rx) => `<path d="M${pts.map(p => P(p).map(v => v.toFixed(1)).join(' ')).join(' L')} Z" fill="${rx === null ? shade(CUBE_GOLD, 0.18) : shade(CUBE_GOLD, -(0.05 + 0.2 * (rx + 1) / 2))}"/>`;
+  let out = '';
+  for (const [i, j, k] of cubes) {
+    const x0 = i - off, x1 = x0 + 1, y0 = j - off, y1 = y0 + 1, z0 = k, z1 = k + 1;
+    if (s > 0 && !has(i + 1, j, k)) out += face([[x1, y0, z0], [x1, y1, z0], [x1, y1, z1], [x1, y0, z1]], c);
+    if (s < 0 && !has(i - 1, j, k)) out += face([[x0, y0, z0], [x0, y1, z0], [x0, y1, z1], [x0, y0, z1]], -c);
+    if (c > 0 && !has(i, j + 1, k)) out += face([[x0, y1, z0], [x1, y1, z0], [x1, y1, z1], [x0, y1, z1]], -s);
+    if (c < 0 && !has(i, j - 1, k)) out += face([[x0, y0, z0], [x1, y0, z0], [x1, y0, z1], [x0, y0, z1]], s);
+    if (!has(i, j, k + 1)) out += face([[x0, y0, z1], [x1, y0, z1], [x1, y1, z1], [x0, y1, z1]], null);
+  }
+  return `<g style="stroke:${CUBE_EDGE};stroke-width:1.6;stroke-linejoin:round">${out}</g>`;
+}
+function mountSpin(root) {
+  const g = root.querySelector('#spin-g'), deg = root.querySelector('#spin-deg');
+  if (!g) return null;
+  const draw = () => {
+    g.innerHTML = spinSVG(SPIN, spin.theta, spin.elev, 38, 0, 30);
+    deg.textContent = `${Math.round(((spin.theta * 180 / Math.PI) % 360 + 360) % 360)}° · tilt ${Math.round(spin.elev * 180 / Math.PI)}°`;
+  };
+  draw();
+  let drag = null, raf = 0;
+  const turn = dir => {
+    cancelAnimationFrame(raf);
+    const from = spin.theta, to = Math.round((spin.theta + dir * Math.PI / 2) / (Math.PI / 4)) * (Math.PI / 4), t0 = performance.now();
+    if (reduced) { spin.theta = to; return draw(); }
+    const step = now => { const t = Math.min(1, (now - t0) / 380), e = 1 - Math.pow(1 - t, 3); spin.theta = from + (to - from) * e; draw(); if (t < 1) raf = requestAnimationFrame(step); };
+    raf = requestAnimationFrame(step);
+  };
+  const down = e => {
+    const b = e.target.closest('[data-spin]');
+    if (b) { turn(+b.dataset.spin); return; }
+    drag = { x: e.clientX, y: e.clientY, t: spin.theta, el: spin.elev };
+    root.setPointerCapture(e.pointerId);
+  };
+  const move = e => {
+    if (!drag) return;
+    const k = 960 / root.getBoundingClientRect().width;
+    spin.theta = drag.t - (e.clientX - drag.x) * k * 0.009;
+    spin.elev = Math.max(0.35, Math.min(0.96, drag.el + (e.clientY - drag.y) * k * 0.004));
+    draw();
+  };
+  const up = () => { drag = null; };
+  const keys = e => { const b = e.target.closest('[data-spin]'); if (b && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); e.stopPropagation(); turn(+b.dataset.spin); } };
+  root.classList.add('spinning');
+  root.addEventListener('pointerdown', down); root.addEventListener('pointermove', move);
+  root.addEventListener('pointerup', up); root.addEventListener('pointercancel', up); root.addEventListener('keydown', keys);
+  return () => {
+    cancelAnimationFrame(raf); root.classList.remove('spinning');
+    root.removeEventListener('pointerdown', down); root.removeEventListener('pointermove', move);
+    root.removeEventListener('pointerup', up); root.removeEventListener('pointercancel', up); root.removeEventListener('keydown', keys);
+  };
+}
+const spinButton = (x, dir, label, aria) => `<g data-spin="${dir}" role="button" tabindex="0" aria-label="${aria}" style="cursor:pointer">${pill(x, 245, label, { fs: 13, tone: 'yellow' })}</g>`;
+
+function heightTiles(x0, y0, a, heights) {
+  let s = '<g class="small">';
+  heights.forEach((row, j) => row.forEach((n, i) => {
+    const x = x0 + (i - j) * a, y = y0 + (i + j) * a / 2;
+    s += prism(x, y, a, 5, n ? 'sheet' : 'stone') + `<text class="lbl" x="${x}" y="${y - 1}" font-size="12">${n}</text>`;
+  }));
+  return s + '</g>';
+}
+const RED = c => /[♥♦]/.test(c);
+function card(x, y, c, o = {}) {
+  const w = o.w || 54, h = o.h || 74;
+  let s = `<g transform="translate(${x - w / 2} ${y - h / 2})"><rect class="pdrop" x="1.5" y="2.5" width="${w}" height="${h}" rx="7"/>`;
+  if (c) {
+    const r = c.slice(0, -1), su = c.slice(-1), col = RED(su) ? 'var(--red)' : 'var(--ink)';
+    s += `<rect class="pbody" width="${w}" height="${h}" rx="7"/>
+      <text x="7" y="18" font-size="14" font-weight="800" style="fill:${col};font-family:var(--font)">${r}</text>
+      <text x="${w / 2}" y="${h / 2 + 14}" font-size="28" text-anchor="middle" style="fill:${col}">${su}</text>`;
+    if (o.letter) s += `<circle cx="${w - 9}" cy="10" r="8" style="fill:var(--violet);stroke:var(--ink);stroke-width:1.5"/><text class="lbl" x="${w - 9}" y="13.5" font-size="10">${o.letter}</text>`;
+  } else {
+    s += `<rect class="pbody" width="${w}" height="${h}" rx="7" style="fill:var(--violet)"/>
+      <rect x="5" y="5" width="${w - 10}" height="${h - 10}" rx="4" style="fill:none;stroke:var(--ink);stroke-width:1.2;stroke-dasharray:3 3;opacity:.45"/>
+      <text class="lbl" x="${w / 2}" y="${h / 2 + 8}" font-size="22">${o.letter || ''}</text>`;
+  }
+  if (o.pick) s += `<rect x="-5" y="-5" width="${w + 10}" height="${h + 10}" rx="10" style="fill:none;stroke:var(--glow);stroke-width:4"/>`;
+  return s + '</g>';
+}
+function phone(x, y, inner) {
+  const w = 150, h = 280;
+  return `<g transform="translate(${x - w / 2} ${y - h / 2})"><rect class="pdrop" x="2" y="3.5" width="${w}" height="${h}" rx="24"/>
+    <rect class="pbody" width="${w}" height="${h}" rx="24" style="fill:var(--ink-2)"/>
+    <rect x="8" y="10" width="${w - 16}" height="${h - 20}" rx="17" style="fill:var(--sheet)"/>${inner}</g>`;
+}
+const txt = (x, y, t, fs = 11, cls = 'lbl') => `<text class="${cls}" x="${x}" y="${y}" font-size="${fs}">${esc(t)}</text>`;
+const key = (x, y, w, h, t, tone, fs = 12) => `<rect class="pbody" x="${x}" y="${y}" width="${w}" height="${h}" rx="6" style="fill:var(--${tone || 'card'});stroke-width:1.5"/>` + txt(x + w / 2, y + h / 2 + fs * .36, t, fs);
+function bar(x, y, segs, scale = 6) {
+  let s = '', cx = x;
+  for (const [sec, hue, label] of segs) {
+    const w = sec * scale;
+    s += `<rect class="pdrop" x="${cx + 1.5}" y="${y - 12.5}" width="${w}" height="30" rx="6"/>
+      <rect class="pbody" x="${cx}" y="${y - 15}" width="${w}" height="30" rx="6" style="fill:var(--${hue})"/>
+      ${txt(cx + w / 2, y + 4, label, 11)}${txt(cx + w / 2, y + 33, sec + ' s', 10.5, 'sub')}`;
+    cx += w + 4;
+  }
+  return s;
+}
+
+/* ---------- element renderer ---------- */
+function render(e) {
+  switch (e.type) {
+    case 'block': {
+      const a = e.a || 62, h = e.h || 46;
+      const cy = e.y - h / 2 - (e.sub ? 6 : 0);
+      return prism(e.x, e.y, a, h, e.hue) +
+        (e.icon ? icon(e.icon, e.x, cy - 24, e.a && e.a < 56 ? .85 : 1) : '') +
+        `<text class="lbl" x="${e.x}" y="${cy + 6}" font-size="${e.fs || 16}">${esc(e.label)}</text>` +
+        (e.sub ? `<text class="sub" x="${e.x}" y="${cy + 22}" font-size="11.5">${esc(e.sub)}</text>` : '');
+    }
+    case 'slab': return prism(e.x, e.y, e.a || 50, e.h || 12, e.hue || 'stone') + (e.label ? pill(e.x, e.y + (e.ly || 40), e.label, { tone: e.tone, fs: e.fs || 12.5 }) : '');
+    case 'device': return prism(e.x, e.y, 54, 12, 'stone') + charSVG({ ...e.char, x: e.x, y: e.y - 14 }) + pill(e.x, e.y + 42, e.label, { fs: 13 });
+    case 'char': return charSVG(e);
+    case 'pill': return pill(e.x, e.y, e.text, e);
+    case 'lead': return `<path class="lead" d="M${e.from.join(' ')} L${e.to.join(' ')}"/><circle cx="${e.to[0]}" cy="${e.to[1]}" r="3" style="fill:var(--ink)"/>`;
+    case 'vision': return `<ellipse class="vision ${e.devil ? 'devil' : ''}" cx="${e.x}" cy="${e.y}" rx="${e.rx}" ry="${e.rx / 2}"/>`;
+    case 'arrow': {
+      const [x1, y1] = e.from, [x2, y2] = e.to, len = Math.hypot(x2 - x1, y2 - y1);
+      const bend = e.bend || 0, cx = (x1 + x2) / 2 - (y2 - y1) / len * bend, cy = (y1 + y2) / 2 + (x2 - x1) / len * bend;
+      const d = `M${x1} ${y1} Q${cx} ${cy} ${x2} ${y2}`;
+      const mx = .25 * x1 + .5 * cx + .25 * x2 + (e.lo ? e.lo[0] : 0), my = .25 * y1 + .5 * cy + .25 * y2 + (e.lo ? e.lo[1] : 0);
+      const packet = e.flow && !reduced ? `<circle r="5.5" class="pk-${e.flow}"><animateMotion dur="${e.dur || 1.8}s" repeatCount="indefinite" path="${d}"/></circle>` : '';
+      return `<path class="arrow ${e.dashed ? 'dashed' : ''} ${e.bad ? 'bad' : ''}" d="${d}" marker-end="url(#${e.bad ? 'ahb' : 'ah'})"/>${packet}` +
+        (e.label ? pill(mx, my, e.label, { fs: 12, tone: e.tone }) : '');
+    }
+    case 'custom': return e.draw();
+  }
+  return '';
+}
+
+/* ---------- the map (same numbers as public/map.js) ---------- */
+const ROOMS = [
+  { name: 'Cafeteria', x: 600, y: 80, w: 400, h: 300, hue: 'orange' },
+  { name: 'Vault', x: 120, y: 80, w: 320, h: 240, hue: 'yellow' },
+  { name: 'Lab', x: 1160, y: 80, w: 320, h: 240, hue: 'blue' },
+  { name: 'Casino', x: 120, y: 700, w: 360, h: 300, hue: 'rose' },
+  { name: 'Library', x: 620, y: 720, w: 360, h: 280, hue: 'violet' },
+  { name: 'Engine Room', x: 1120, y: 700, w: 360, h: 300, hue: 'stone' },
+  { name: 'Great Hall', x: 240, y: 480, w: 1160, h: 140, hue: 'green' },
+];
+const CORRIDORS = [
+  { x: 760, y: 370, w: 80, h: 120 }, { x: 240, y: 310, w: 80, h: 180 }, { x: 1280, y: 310, w: 80, h: 180 },
+  { x: 260, y: 610, w: 80, h: 100 }, { x: 760, y: 610, w: 80, h: 120 }, { x: 1260, y: 610, w: 80, h: 100 },
+  { x: 430, y: 180, w: 180, h: 70 }, { x: 990, y: 180, w: 180, h: 70 },
+];
+const TASKS = [[200,790],[410,940],[190,140],[380,270],[1230,140],[1420,270],[660,330],[680,780],[920,950],[1180,780],[1420,940],[1080,545]];
+const K = 0.33;
+const iso = (x, y) => [Math.round((x - y) * K - 86), Math.round((x + y) * K / 2 - 205)];
+const mapEls = {};
+mapEls.corridors = { type: 'custom', draw: () => CORRIDORS.map(c => boxRect(iso, c, 5, 'stone')).join('') };
+mapEls.rooms = { type: 'custom', draw: () => [...ROOMS].sort((a, b) => (a.x + a.w + a.y + a.h) - (b.x + b.w + b.y + b.h)).map(r => boxRect(iso, r, 16, r.hue)).join('') };
+mapEls.hall = { type: 'custom', draw: () => boxRect(iso, ROOMS[6], 16, 'green') };
+mapEls.tasks = { type: 'custom', draw: () => TASKS.map(([x, y]) => { const [px, py] = iso(x, y); return prism(px, py - 16, 9, 9, 'yellow'); }).join('') };
+mapEls.button = { type: 'custom', draw: () => { const [x, y] = iso(800, 200); return prism(x, y - 16, 12, 14, 'rose') + pill(x + 40, y - 58, 'emergency button', { fs: 11.5, tone: 'rose' }); } };
+mapEls.spawn = { type: 'custom', draw: () => { const [x, y] = iso(800, 270); return charSVG({ x: x - 18, y: y - 16, s: .5, shirt: SHIRTS[0], hair: 'bob', hc: HAIRC[3] }) + charSVG({ x: x + 4, y: y - 12, s: .5, shirt: SHIRTS[1], hair: 'spiky', skin: SKIN[3] }) + charSVG({ x: x + 24, y: y - 18, s: .5, shirt: SHIRTS[3], hair: 'afro', skin: SKIN[4], hc: HAIRC[1] }); } };
+mapEls.labels = { type: 'custom', draw: () => ROOMS.map(r => { const [x, y] = iso(r.x + r.w / 2, r.y + r.h / 2); return pill(x, y - 16, r.name, { fs: 11.5 }); }).join('') };
+mapEls.deadend = { type: 'custom', draw: () => { const a = iso(280, 200), b = iso(1320, 200); return pill(a[0], a[1] - 60, 'one exit only', { fs: 11, tone: 'rose' }) + pill(b[0], b[1] - 60, 'one exit only', { fs: 11, tone: 'rose' }); } };
+
+/* ---------- phase 1 data ---------- */
+const EASY = [[2, 1, 1], [1, 1, 0], [1, 0, 0]];
+const MED = [[3, 2, 2, 1], [2, 2, 1, 1], [2, 1, 1, 0], [1, 1, 0, 0]];
+const HARD = [[4, 3, 3, 2, 1], [3, 3, 2, 2, 1], [3, 2, 2, 1, 0], [2, 2, 1, 1, 0], [1, 1, 0, 0, 0]];
+const LETTERS = 'ABCDEFGHIJKL'.split('');
+const DEAL = ['K♠', '7♦', '2♣', 'Q♥', '9♠', 'K♥', '4♦', 'J♣', '9♥', '3♠', 'A♦', '7♣'];
+const COMM = ['K♦', '7♥', '2♠'];
+const gpos = i => [-140 + (i % 4 - 1.5) * 66, (Math.floor(i / 4) - 1) * 90];
+const cubePhone = () => txt(75, 38, 'How many cubes?', 11) + txt(75, 54, 'answer · 0:09', 9.5, 'sub') +
+  `<rect class="pbody" x="25" y="62" width="100" height="38" rx="8" style="fill:var(--paper);stroke-width:1.5"/>` + txt(75, 90, '20', 24) +
+  ['1', '2', '3', '4', '5', '6', '7', '8', '9', '⌫', '0', '✓'].map((k, i) => key(21 + (i % 3) * 38, 110 + Math.floor(i / 3) * 34, 32, 28, k, k === '✓' ? 'green' : undefined, 13)).join('') +
+  txt(75, 258, 'tap ✓ to lock in', 9.5, 'sub');
+const pokerPhone = () => txt(75, 38, 'Pick 2 cards', 11.5) + txt(75, 54, 'pick · 0:14', 9.5, 'sub') +
+  LETTERS.map((L, i) => key(14 + (i % 4) * 32, 66 + Math.floor(i / 4) * 36, 26, 30, L, (L === 'A' || L === 'F') ? 'green' : undefined, 12)).join('') +
+  txt(75, 192, 'your hand', 9.5, 'sub') + txt(75, 211, 'A + F', 15) + key(22, 224, 106, 32, 'Lock in', 'green', 12);
+const splitPhone = () => txt(75, 30, 'BOARD', 9, 'sub') +
+  LETTERS.map((L, i) => `<rect x="${18 + (i % 4) * 30}" y="${38 + Math.floor(i / 4) * 38}" width="24" height="32" rx="4" style="fill:var(--violet);stroke:var(--ink);stroke-width:1.2"/>` + txt(30 + (i % 4) * 30, 58 + Math.floor(i / 4) * 38, L, 10)).join('') +
+  `<path d="M16 160 H134" style="stroke:var(--line-strong);stroke-width:1.5;stroke-dasharray:4 4"/>` + txt(75, 178, 'YOUR MOVE', 9, 'sub') +
+  key(42, 188, 30, 30, 'A', 'green', 13) + key(78, 188, 30, 30, 'F', 'green', 13) + key(22, 228, 106, 30, 'Lock in', 'green', 12);
+function roundRow(y, hue, name, items, gapX = 92) {
+  const w = name.length * 7.2 + 26;
+  let s = pill(-360 + w / 2, y - 62, name, { fs: 12, tone: hue });
+  items.forEach((t, i) => {
+    const x = -330 + i * gapX, isRound = /^R\d/.test(t);
+    s += prism(x, y, 30, isRound ? 20 : 12, isRound ? hue : 'stone') + txt(x, y + 34, t, 11.5);
+    if (i) s += `<path class="arrow" d="M${x - gapX + 34} ${y - 6} L${x - 36} ${y - 6}" marker-end="url(#ah)"/>`;
+  });
+  return s;
+}
+
+/* ---------- parts ---------- */
+const PHASES = { 1: 'Phase 1 · Game Night', 2: 'Phase 2 · The Den' };
+const PARTS = [
+{
+  id: 'game-night', phase: 1, title: 'Game Night Flow', folder: 'yellow', mins: '6 min', level: 'Rooms & setup',
+  summary: 'Someone opens a room, picks at least one game, sets each game’s difficulty and length, and everyone plays on their own screen.',
+  stats: [['Room code', '4 letters'], ['Games per night', '1 or more'], ['Difficulty', 'per game'], ['Players', '2–10']],
+  legend: [['#ef9a52', 'player action'], ['#7fc278', 'server update']],
+  decisions: ['Join by room code, a link, or both?', 'Can people join after the first game has started?', 'Does the host play too, or only run the night?'],
+  els: {
+    a_create: { type: 'arrow', from: [-300, -100], to: [-186, -158], bend: -10, flow: 'req', label: 'create room', lo: [-34, -16] },
+    j1: { type: 'arrow', from: [-285, 86], to: [-162, -100], bend: 12, flow: 'req' },
+    j2: { type: 'arrow', from: [-150, 116], to: [-122, -100], flow: 'req', dur: 2.1, label: 'join: K7QF' },
+    j3: { type: 'arrow', from: [0, 86], to: [-84, -104], bend: -12, flow: 'req', dur: 2.4 },
+    a_pick: { type: 'arrow', from: [-56, -172], to: [130, -176], bend: -15, label: 'pick ≥ 1' },
+    host: { type: 'device', x: -350, y: -60, label: 'host', char: { shirt: SHIRTS[5], hair: 'bun', hc: HAIRC[0], skin: SKIN[2] } },
+    room: { type: 'block', x: -120, y: -140, a: 58, h: 42, hue: 'yellow', label: 'Room', sub: 'code K7QF', icon: 'users', fs: 15 },
+    players: { type: 'custom', draw: () => [[-300, 170, 'Mina', SHIRTS[2], 'bob', 3, 1], [-150, 200, 'Jae', SHIRTS[1], 'spiky', 1, 3], [0, 170, 'Sol', SHIRTS[4], 'long', 2, 0]]
+      .map(([x, y, n, sh, hr, hc, sk]) => prism(x, y, 34, 10, 'stone') + charSVG({ x, y: y - 11, s: .85, shirt: sh, hair: hr, hc: HAIRC[hc], skin: SKIN[sk] }) + pill(x, y + 32, n, { fs: 11.5 })).join('') },
+    g_cube: { type: 'block', x: 195, y: -150, a: 58, h: 40, hue: 'blue', label: 'Cube Count', icon: 'cube', fs: 13 },
+    g_poker: { type: 'block', x: 355, y: -70, a: 58, h: 40, hue: 'rose', label: 'Memory Poker', icon: 'cards', fs: 12 },
+    g_more: { type: 'block', x: 220, y: 45, a: 52, h: 34, hue: 'stone', label: 'more later', icon: 'plus', fs: 12 },
+    chk: { type: 'custom', draw: () => pill(195, -240, '✓ game 1', { fs: 11.5, tone: 'green' }) + pill(355, -160, '✓ game 2', { fs: 11.5, tone: 'green' }) },
+    diff: { type: 'custom', draw: () => pill(195, -95, 'Medium · 5 rounds', { fs: 11.5, tone: 'yellow' }) + pill(355, -14, 'Hard · 3 rounds', { fs: 11.5, tone: 'yellow' }) },
+    chain: { type: 'custom', draw: () =>
+      roundRow(-140, 'blue', 'Cube Count · Medium · 5 rounds', ['intro', 'R1', 'R2', 'R3', 'R4', 'R5', 'standings']) +
+      roundRow(70, 'rose', 'Memory Poker · Hard · 3 rounds', ['intro', 'R1', 'R2', 'R3', 'standings']) +
+      `<path class="arrow dashed" d="M222 -105 Q 0 -30 -330 30" marker-end="url(#ah)"/>` +
+      `<path class="arrow" d="M72 64 Q 150 90 190 170" marker-end="url(#ah)"/>` +
+      prism(230, 210, 50, 30, 'yellow') + icon('trophy', 230, 168) + txt(230, 255, 'final podium', 12) },
+    screens: { type: 'custom', draw: () => phone(-140, 10, splitPhone()) +
+      `<path class="lead" d="M-60 -60 L90 -60"/>` + pill(205, -60, 'board: the same for everyone', { fs: 12 }) +
+      `<path class="lead" d="M-60 75 L90 75"/>` + pill(190, 75, 'your move: only yours', { fs: 12, tone: 'green' }) +
+      pill(150, 210, 'later: TV mode for one shared big screen', { fs: 11.5, tone: 'violet' }) },
+    eng: { type: 'block', x: 0, y: 50, a: 80, h: 56, hue: 'yellow', label: 'Room engine', sub: 'players · timers · scores', icon: 'server', fs: 15 },
+    mods: { type: 'custom', draw: () =>
+      [[-300, -150, 'blue', 'cube-count', 'cube', ''], [-300, 175, 'rose', 'memory-poker', 'cards', ''], [300, -150, 'violet', 'the-den', 'mask', 'phase 2'], [300, 175, 'stone', 'next game', 'plus', '']]
+        .map(([x, y, hue, l, ic, sub]) => render({ type: 'block', x, y, a: 56, h: 36, hue, label: l, icon: ic, sub, fs: 12 })).join('') +
+      [[-245, -140, -85, 0], [-245, 160, -85, 85], [245, -140, 85, 0], [245, 160, 85, 85]]
+        .map(([a, b, c, d]) => `<path class="arrow dashed" d="M${a} ${b} L${c} ${d}" marker-end="url(#ah)"/>`).join('') +
+      pill(0, -240, 'every game: newRound · viewFor · input · score', { fs: 12, tone: 'violet' }) },
+  },
+  steps: [
+    { short: 'Create', tag: 'CONCEPT', title: 'Someone creates a room', add: ['host', 'room', 'a_create'], hi: ['room'],
+      body: `<p>The host opens the site and taps <b>Create room</b>. The server makes a room with a short code like <code>K7QF</code> and a share link.</p><p>The host is in charge of the settings and the Start button. If they leave, the next person in line becomes host.</p>`,
+      key: 'A room is one game night: its players, its chosen games and its scores.' },
+    { short: 'Join', tag: 'CONCEPT', title: 'Friends join with the code', add: ['players', 'j1', 'j2', 'j3'], hi: ['players'],
+      body: `<p>Everyone else opens the link or types the code on their phone or laptop, picks a name, and appears in the lobby.</p><p>For remote play, everyone is on a Discord call at the same time.</p>`,
+      key: 'No accounts. A name and a code is enough for a game night.' },
+    { short: 'Pick games', tag: 'CONCEPT', title: 'The host picks the games', add: ['g_cube', 'g_poker', 'g_more', 'a_pick', 'chk'], hi: ['chk'],
+      body: `<p>The host ticks which games to play and in what order. <b>At least one</b> game must be picked; the Start button stays locked until then.</p><p>For now the menu has two games, Cube Count and Memory Poker. More can be added later without changing the room.</p>`,
+      key: 'The night is a playlist of games.' },
+    { short: 'Settings', tag: 'DECISION', title: 'Difficulty and length, per game', add: ['diff'], hi: ['diff'],
+      body: `<p>Each picked game gets its own two settings:</p><ul><li><b>Difficulty:</b> Easy, Medium or Hard. This changes the puzzle and the timers.</li><li><b>Length:</b> Short, Standard or Long (3, 5 or 7 rounds). See part 1.2.</li></ul><p>Defaults are Medium and Standard, so a host can just press Start.</p>`,
+      key: 'Good defaults mean nobody has to touch a setting.' },
+    { short: 'The run', tag: 'CONCEPT', title: 'The night runs itself', remove: ['host', 'room', 'a_create', 'players', 'j1', 'j2', 'j3', 'g_cube', 'g_poker', 'g_more', 'a_pick', 'chk', 'diff'], add: ['chain'], hi: ['chain'],
+      body: `<p>After Start, the server walks through the playlist:</p><ul><li><b>Intro:</b> 15 seconds of rules for the game.</li><li><b>Rounds:</b> played one after another.</li><li><b>Standings:</b> the game’s ranking, which turns into pieces.</li></ul><p>When the last game ends, the final podium shows who has the most pieces.</p>`,
+      key: 'After Start, the host doesn’t have to do anything.' },
+    { short: 'Screens', tag: 'DECISION', title: 'One screen each', remove: ['chain'], add: ['screens'], hi: ['screens'],
+      body: `<p>Because play is remote, every player’s own device shows both parts: the <b>board</b> (cubes or cards, the same for everyone) and <b>your move</b> (number pad or letter picks, private).</p><p>Later, a TV mode can show only the board on one big screen for in-person nights, with phones as controllers.</p>`,
+      key: 'Board and controls are separate views, so in-person mode later is cheap.' },
+    { short: 'Engine', tag: 'TECHNIQUE', title: 'Games plug into one room engine', remove: ['screens'], add: ['eng', 'mods'], hi: ['eng'],
+      body: `<p>The room engine handles everything that’s the same for every game: players, codes, timers, phases, scores and pieces.</p><p>Each game is a small module with four functions:</p><ul><li><code>newRound(difficulty)</code> makes the secret round</li><li><code>viewFor(player)</code> says what each screen may see</li><li><code>input(player, move)</code> accepts or rejects a move</li><li><code>score(round)</code> gives points</li></ul><p>The Den (phase 2) becomes one more module later.</p>`,
+      key: 'New game = new module. The room never changes.' },
+    { short: 'Recap', tag: 'RECAP', title: 'Recap', hi: ['eng'],
+      body: `<ul><li>Host creates a room, friends join with a code.</li><li>Pick one or more games, each with a difficulty and a length.</li><li>The server runs intro, rounds and standings for each game, then the podium.</li><li>Games are plug-in modules on one room engine.</li></ul>`,
+      key: 'One room, a playlist of games, one running score.' },
+  ],
+},
+{
+  id: 'rounds', phase: 1, title: 'Rounds & Scoring', folder: 'green', mins: '5 min', level: 'Pacing',
+  summary: 'How many rounds each game should have, and how round points turn into pieces.',
+  stats: [['Standard', '5 rounds'], ['Short / Long', '3 / 7'], ['Target per game', '4–6 min'], ['Final round', '× 2']],
+  legend: [],
+  decisions: ['Standard = 5 rounds, Short = 3, Long = 7?', 'Final round worth double?', 'Pieces for 1st / 2nd / 3rd: 3 / 2 / 1?'],
+  els: {
+    extremes: { type: 'custom', draw: () => {
+      let s = prism(-300, -90, 30, 22, 'blue') + txt(-300, -55, 'R1', 11.5) + pill(30, -100, '1 round: one lucky guess wins the game', { fs: 12, tone: 'rose' });
+      for (let i = 0; i < 9; i++) { const x = -390 + i * 72; s += prism(x, 120, 30, 22, 'blue') + txt(x, 155, 'R' + (i + 1), 11.5); }
+      return s + pill(0, 205, '9 rounds: ten minutes of the same puzzle', { fs: 12, tone: 'rose' }); } },
+    bars: { type: 'custom', draw: () =>
+      pill(-188, -160, 'Cube Count · one round', { fs: 12, tone: 'blue' }) + bar(-280, -110, [[20, 'blue', 'look'], [15, 'orange', 'answer'], [15, 'green', 'reveal']]) + pill(95, -110, '≈ 50 s', { fs: 13, tone: 'yellow' }) +
+      pill(-180, 10, 'Memory Poker · one round', { fs: 12, tone: 'rose' }) + bar(-280, 60, [[20, 'violet', 'memorize'], [5, 'yellow', 'deck'], [20, 'orange', 'pick'], [15, 'green', 'showdown']]) + pill(170, 60, '≈ 60 s', { fs: 13, tone: 'yellow' }) },
+    budget: { type: 'pill', x: 0, y: 200, text: 'target: 4–6 minutes per game, about 20 minutes for 3 games', fs: 12, tone: 'green' },
+    rowsStd: { type: 'custom', draw: () =>
+      roundRow(-110, 'blue', 'Cube Count · Standard', ['R1', 'R2', 'R3', 'R4', 'R5'], 85) + pill(140, -120, '≈ 4 min', { fs: 12.5, tone: 'yellow' }) +
+      roundRow(70, 'rose', 'Memory Poker · Standard', ['R1', 'R2', 'R3', 'R4', 'R5'], 85) + pill(140, 60, '≈ 5 min', { fs: 12.5, tone: 'yellow' }) },
+    options: { type: 'custom', draw: () => pill(-270, 215, 'Short · 3 rounds', { fs: 12.5 }) + pill(0, 215, 'Standard · 5 rounds ✓', { fs: 12.5, tone: 'green' }) + pill(270, 215, 'Long · 7 rounds', { fs: 12.5 }) },
+    finalx2: { type: 'custom', draw: () => [-110, 70].map(y => prism(10, y, 30, 34, 'yellow') + pill(10, y - 70, '× 2', { fs: 12.5, tone: 'yellow' })).join('') },
+    podium: { type: 'custom', draw: () => [[-135, 70, 'stone', '2nd', '+2 pieces', SHIRTS[1], 'spiky', 3], [0, 105, 'yellow', '1st', '+3 pieces', SHIRTS[0], 'bob', 1], [135, 45, 'stone', '3rd', '+1 piece', SHIRTS[4], 'long', 0]]
+      .map(([x, h, hue, place, pc, sh, hr, sk]) => prism(x, 170, 66, h, hue) + txt(x, 170 - h / 2 + 14, place, 16) +
+        charSVG({ x, y: 170 - h, s: 1.15, shirt: sh, hair: hr, hc: HAIRC[2], skin: SKIN[sk], state: place === '1st' ? 'walk' : 'idle' }) +
+        pill(x, 245, pc, { fs: 12, tone: place === '1st' ? 'green' : undefined })).join('') +
+      pill(0, -230, 'night winner = most pieces after every game', { fs: 12.5, tone: 'violet' }) },
+    ties: { type: 'pill', x: 0, y: -180, text: 'same answer = same points · speed never counts', fs: 12, tone: 'orange' },
+  },
+  steps: [
+    { short: 'The problem', tag: 'PROBLEM', title: 'Too few is luck, too many is a slog', add: ['extremes'],
+      body: `<p>With one round, a lucky guess decides the whole game. With nine, the puzzle stops being fresh and people drift off.</p><p>So the number of rounds is really a question of <b>time</b>: how long can one game hold attention?</p>`,
+      key: 'Pick rounds by minutes, not by feel.' },
+    { short: 'Measure', tag: 'TECHNIQUE', title: 'Measure one round', remove: ['extremes'], add: ['bars'], hi: ['bars'],
+      body: `<p>Add up the timers in one round at Medium:</p><ul><li><b>Cube Count:</b> 20 s look and turn + 15 s answer + 15 s reveal ≈ <b>50 s</b>.</li><li><b>Memory Poker:</b> 20 s memorize + 5 s deck + 20 s pick + 15 s showdown ≈ <b>60 s</b>.</li></ul>`,
+      key: 'A round is a fixed sequence of timers, so its length is known in advance.' },
+    { short: 'Budget', tag: 'TECHNIQUE', title: 'Give each game a time budget', add: ['budget'], hi: ['budget'],
+      body: `<p>Party games feel best at around <b>4–6 minutes</b>: long enough for a comeback, short enough that the next game feels fresh.</p><p>With three games plus intros and standings, a night takes about 20 minutes, which is easy to repeat.</p>`,
+      key: 'Short games you can play again beat long ones nobody asks for twice.' },
+    { short: 'Answer', tag: 'DECISION', title: 'Recommendation: 5 rounds by default', remove: ['bars', 'budget'], add: ['rowsStd', 'options'], hi: ['options'],
+      body: `<p>Five rounds puts Cube Count at about 4 minutes and Memory Poker at about 5. Both are inside the budget.</p><p>The host can change length per game:</p><ul><li><b>Short:</b> 3 rounds, for a quick warm-up.</li><li><b>Standard:</b> 5 rounds (default).</li><li><b>Long:</b> 7 rounds, for a serious final.</li></ul><p>Odd numbers make a tied game less likely.</p>`,
+      key: 'Default 5. Let the host choose 3 or 7.' },
+    { short: 'Difficulty', tag: 'CONCEPT', title: 'Difficulty doesn’t change the count', hi: ['rowsStd'],
+      body: `<p>Difficulty and length are separate. Hard makes each round harder (bigger structures, shorter looks); it doesn’t add or remove rounds.</p><p>That keeps game time predictable whatever the host picks.</p>`,
+      key: 'Two independent knobs: how hard and how long.' },
+    { short: 'Final ×2', tag: 'DECISION', title: 'The last round counts double', add: ['finalx2'], hi: ['finalx2'],
+      body: `<p>Doubling the final round’s points keeps everyone in the game until the end. Someone in third can still win the game.</p><p>It also gives each game a clear climax for the reveal.</p>`,
+      key: 'A comeback chance keeps losing players interested.' },
+    { short: 'Pieces', tag: 'CONCEPT', title: 'Round points become pieces', remove: ['rowsStd', 'options', 'finalx2'], add: ['podium'], hi: ['podium'],
+      body: `<p>Points only count inside a game. At the end of each game, its ranking turns into <b>pieces</b>: +3 for 1st, +2 for 2nd, +1 for 3rd.</p><p>Pieces add up across the night. Using placings rather than raw points means a game with big point totals can’t outweigh the others.</p>`,
+      key: 'Every game is worth the same to the overall winner.' },
+    { short: 'Ties', tag: 'DECISION', title: 'Handling ties', add: ['ties'], hi: ['ties'],
+      body: `<ul><li><b>Inside a round:</b> the same answer earns the same points. Speed never counts, because remote players have different connections.</li><li><b>A game ends tied:</b> tied players both get the higher place’s pieces.</li><li><b>The night ends tied:</b> one sudden-death Cube Count round.</li></ul>`,
+      key: 'Never let internet speed decide a winner.' },
+    { short: 'Recap', tag: 'RECAP', title: 'Recap', remove: ['ties'],
+      body: `<ul><li>Round length is known: ~50 s for Cube Count, ~60 s for Memory Poker.</li><li>Aim for 4–6 minutes per game, so the default is <b>5 rounds</b>.</li><li>Hosts can pick Short (3) or Long (7). Difficulty is a separate setting.</li><li>The final round counts double.</li><li>Placings turn into pieces: 3, 2, 1.</li></ul>`,
+      key: 'Answer to “how many rounds”: 5 by default, 3 or 7 by choice.' },
+  ],
+},
+{
+  id: 'cube-count', phase: 1, title: 'Cube Count', folder: 'blue', mins: '7 min', level: 'Game 1',
+  summary: 'An isometric structure of small cubes that each player can turn around. Look for a few seconds, then say how many cubes there are.',
+  stats: [['Look (Medium)', '20 s'], ['Answer', '15 s'], ['Cubes (Medium)', '15–30'], ['Exact answer', '3 pts']],
+  legend: [],
+  decisions: ['Free turning, or 90° snaps only?', 'Allow tilting to look from higher up?', 'Hard: snaps only, or a limited number of turns?', 'Points: exact 3, within 5% 2, within 10% 1?'],
+  els: {
+    stack: { type: 'custom', draw: () => cubeStack(-150, -10, 30, MED) },
+    ask: { type: 'pill', x: -150, y: -178, text: 'How many cubes?', fs: 14, tone: 'yellow' },
+    timer: { type: 'pill', x: -150, y: 145, text: 'look · 0:20', fs: 12 },
+    spin: { type: 'custom', mount: mountSpin, draw: () => `<g id="spin-g"></g>` +
+      spinButton(-170, -1, '⟲ 90°', 'Turn the structure a quarter turn left') + pill(0, 245, 'or drag to turn', { fs: 12 }) +
+      spinButton(170, 1, '90° ⟳', 'Turn the structure a quarter turn right') +
+      `<text id="spin-deg" class="sub" x="300" y="-235" font-size="12"></text>` + pill(300, -262, 'your view', { fs: 11.5, tone: 'violet' }) },
+    spin3d: { type: 'custom', draw: () =>
+      pill(-300, -230, 'turn the heightmap', { fs: 11.5, tone: 'blue' }) + pill(-300, -190, '→ project each cube', { fs: 11.5, tone: 'blue' }) + pill(-300, -150, '→ draw far to near', { fs: 11.5, tone: 'blue' }) },
+    layers: { type: 'custom', draw: () => cubeStack(-150, 60, 30, MED, { explode: 45, layers: true }) +
+      [['layer 1: 13 cubes', 88, 'blue'], ['layer 2: 6 cubes', 8, 'green'], ['layer 3: 1 cube', -72, 'yellow']].map(([t, y, tone]) => `<path class="lead" d="M-20 ${y} L60 ${y}"/>` + pill(135, y, t, { fs: 12, tone })).join('') +
+      pill(135, -170, '13 + 6 + 1 = 20', { fs: 13, tone: 'green' }) },
+    rule: { type: 'pill', x: -60, y: 240, text: 'rule: every cube sits on the floor or on another cube', fs: 12, tone: 'violet' },
+    tiles: { type: 'custom', draw: () => heightTiles(240, -140, 26, MED) + pill(240, -205, 'heightmap: one number per column', { fs: 11.5 }) },
+    a_build: { type: 'arrow', from: [150, -60], to: [-20, -40], bend: 15, label: 'build', flow: 'res' },
+    gen: { type: 'pill', x: 225, y: 40, text: 'random heights, tall in the middle → keep if 15–30', fs: 11, tone: 'green' },
+    diffs: { type: 'custom', draw: () =>
+      cubeStack(-320, 20, 22, EASY) + cubeStack(-40, 0, 20, MED) + cubeStack(290, -30, 15, SPIN) +
+      [[-320, 'Easy · 3×3 · 25 s look', '7–12 cubes · free turning'], [-40, 'Medium · 4×4 · 20 s', '15–30 cubes · free turning'], [290, 'Hard · 6×6 · 15 s', '40–80 cubes · 90° snaps']]
+        .map(([x, a, b], i) => pill(x, 140, a, { fs: 12, tone: ['green', 'yellow', 'rose'][i] }) + txt(x, 178, b, 11.5, 'sub')).join('') },
+    phone: { type: 'custom', draw: () => phone(330, 10, cubePhone()) },
+    numline: { type: 'custom', draw: () => {
+      let s = cubeStack(0, -175, 26, MED, { layers: true }) + pill(0, -40, 'answer: 20 cubes', { fs: 13, tone: 'green' });
+      s += `<path d="M-330 120 H330" style="stroke:var(--ink);stroke-width:2.2"/>`;
+      for (let n = 15; n <= 25; n++) { const x = (n - 20) * 60; s += `<path d="M${x} 114 V126" style="stroke:var(--ink);stroke-width:2"/>` + txt(x, 142, n, 10.5, 'sub'); }
+      [[20, 'exact → 3 pts', SHIRTS[2], 'bob', 0, 'green'], [21, '1 off → 2 pts', SHIRTS[1], 'spiky', 1, null], [18, '2 off → 1 pt', SHIRTS[4], 'long', 0, null], [16, '4 off → 0', SHIRTS[3], 'afro', 1, null]]
+        .forEach(([g, t, sh, hr, row, tone]) => { const x = (g - 20) * 60; s += charSVG({ x, y: 118, s: .72, shirt: sh, hair: hr, hc: HAIRC[g % 6], skin: SKIN[g % 5] }) + pill(x, 172 + row * 36, `${g}: ${t}`, { fs: 11.5, tone }); });
+      return s; } },
+    net: { type: 'custom', draw: () => pill(190, -150, 'while looking: the outside cubes', { fs: 12, tone: 'blue' }) + pill(190, -100, 'the count itself is never sent', { fs: 12, tone: 'violet' }) + pill(190, -30, 'at reveal: full heightmap + count', { fs: 12, tone: 'green' }) + pill(190, 60, 'a code-savvy player could work it out → house rule', { fs: 11, tone: 'rose' }) },
+    fair: { type: 'custom', draw: () => cubeStack(-230, -20, 30, [[2, 1, 1], [2, 1, 0], [1, 1, 0]]) + cubeStack(200, -20, 30, [[1, 3, 1], [3, 3, 1], [1, 1, 0]]) +
+      pill(200, -150, '? hidden from this side', { fs: 11.5, tone: 'orange' }) + `<path class="lead" d="M200 -136 L200 -70"/>` +
+      pill(-230, 120, 'one view is enough here', { fs: 12, tone: 'green' }) + pill(200, 120, 'turn it and the column appears', { fs: 12, tone: 'yellow' }) },
+  },
+  steps: [
+    { short: 'Puzzle', tag: 'CONCEPT', title: 'Look, then count', add: ['stack', 'ask', 'timer'], hi: ['stack'],
+      body: `<p>An isometric structure of small identical cubes appears for 20 seconds. Then it disappears and everyone types how many cubes they think it had.</p><p>It’s quick to understand and hard to get exactly right: perfect for a warm-up.</p>`,
+      key: 'The challenge is the cubes you can’t see.' },
+    { short: 'Turn it', tag: 'CONCEPT', title: 'Turn it to look around (try it)', remove: ['stack', 'timer'], add: ['spin'], hi: ['spin'],
+      body: `<p>While looking, each player can turn the structure on their own screen:</p><ul><li><b>Drag sideways</b> to spin it.</li><li><b>Drag up or down</b> to tilt it a little.</li><li>Tap <b>⟲ 90°</b> or <b>90° ⟳</b> to snap a quarter turn.</li></ul><p>Everyone turns their own copy; it doesn’t move for anyone else. Try it on the diagram.</p>`,
+      key: 'Turning replaces guessing with looking. Anyone who uses their 20 seconds well can see every column.' },
+    { short: 'How it’s drawn', tag: 'TECHNIQUE', title: 'Drawing a structure that turns', add: ['spin3d'], hi: ['spin3d'],
+      body: `<p>A fixed isometric picture is one camera angle. To turn it, every frame we rotate the heightmap around its middle, project each cube onto the screen with a bit of 3D math, and draw from far to near so near cubes cover far ones. Only faces that touch air are drawn.</p><p>Two ways to build it:</p><ul><li><b>Our own canvas drawing</b>, like this diagram: small, keeps the flat outlined look.</li><li><b>three.js</b>: real 3D with lighting, zoom and perspective, but heavier and harder to keep this style.</li></ul><p>Recommendation: our own drawing first; switch to three.js only if we want zoom or perspective.</p>`,
+      key: 'The heightmap never changes. Only the camera turns.' },
+    { short: 'Layers', tag: 'CONCEPT', title: 'Count by layers', remove: ['spin', 'spin3d', 'ask'], add: ['layers', 'rule'], hi: ['layers'],
+      body: `<p>Taken apart, the example is three layers: 13 + 6 + 1 = <b>20</b> cubes. Most people answer around 16, because the bottom layer is hidden under the others.</p><p>One rule, shown to players, makes it solvable: <b>no floating cubes</b>. Every cube sits on the floor or on another cube.</p>`,
+      key: 'Thinking in layers is the skill the game rewards. The reveal teaches it.' },
+    { short: 'Generator', tag: 'TECHNIQUE', title: 'How the server builds a structure', remove: ['layers', 'rule'], add: ['stack', 'tiles', 'a_build', 'gen'], hi: ['tiles'],
+      body: `<p>A structure is stored as a <b>heightmap</b>: a small grid with one number per column. A 3 means three cubes stacked there. The total is the sum of the numbers.</p><p>The server makes random heights, taller toward the middle so that turning it matters, and keeps it if the count is in range for the difficulty.</p>`,
+      key: 'A grid of numbers is easy to make, check, send and score.' },
+    { short: 'Difficulty', tag: 'DECISION', title: 'Three difficulty levels', remove: ['stack', 'tiles', 'a_build', 'gen'], add: ['diffs'], hi: ['diffs'],
+      body: `<ul><li><b>Easy:</b> 3×3 base, up to 3 high, 7–12 cubes, 25 s to look, free turning.</li><li><b>Medium:</b> 4×4 base, up to 4 high, 15–30 cubes, 20 s, free turning.</li><li><b>Hard:</b> 6×6 base, up to 5 high, 40–80 cubes, 15 s, 90° snaps only.</li></ul><p>Bigger structures, less time, and less freedom to turn.</p>`,
+      key: 'Difficulty = size + time + turning. All three are numbers in one settings table.' },
+    { short: 'Answer', tag: 'CONCEPT', title: 'Answering on your phone', remove: ['diffs'], add: ['stack', 'phone'], hi: ['phone'],
+      body: `<p>When looking time ends, the structure hides and a number pad appears. Type a number and tap ✓ to lock it in.</p><p>Once locked, it can’t change. Players who don’t answer in 15 seconds score 0 for the round.</p>`,
+      key: 'Hide the structure while answering, so the look phase really is memory.' },
+    { short: 'Reveal', tag: 'TECHNIQUE', title: 'Reveal and scoring', remove: ['stack', 'phone'], add: ['numline'], hi: ['numline'],
+      body: `<p>The structure comes back, layer by layer, counting up. Then everyone’s answers appear on a number line.</p><ul><li><b>Exact:</b> 3 points</li><li><b>Within 5%:</b> 2 points</li><li><b>Within 10%:</b> 1 point</li></ul><p>Percentages scale fairly: at Hard, with 40 cubes, 2 off still earns 2 points.</p>`,
+      key: 'Close answers earn something, so nobody is out after one bad round.' },
+    { short: 'Server', tag: 'TECHNIQUE', title: 'What the server sends', remove: ['numline'], add: ['stack', 'net'], hi: ['net'],
+      body: `<p>To draw the structure from any angle, each screen needs every cube on the outside of it. The count is never sent, and answers are checked on the server.</p><p>At the reveal the server sends the full heightmap and the answer.</p><p>Someone who digs through the browser’s data could still work the count out, just as someone could screenshot Memory Poker. For friends, the same house rule covers both.</p>`,
+      key: 'Turning means the shape has to be in the browser. Keep the answer out of it.' },
+    { short: 'How much', tag: 'DECISION', title: 'How much turning?', remove: ['stack', 'net'], add: ['fair'], hi: ['fair'],
+      body: `<p>From one fixed view, a column can hide behind taller ones. Once players can turn the structure, every column shows up from some side, so every puzzle is <b>fair</b>: the only pressure is time.</p><p>Options:</p><ul><li><b>Free turning:</b> smooth, the most natural feel.</li><li><b>90° snaps:</b> four fixed views. Simpler, and you have to choose where to look.</li><li><b>Limited turns:</b> for example 2 quarter-turns per round.</li></ul><p>Tilt stays between about 20° and 55°. A straight top-down view would make counting columns too easy.</p><p>Recommendation: free turning at Easy and Medium, snaps only at Hard.</p>`,
+      key: 'Turning sets how much is skill and how much is time pressure.' },
+    { short: 'Recap', tag: 'RECAP', title: 'Recap', remove: ['fair'], add: ['stack', 'ask'],
+      body: `<ul><li>Round: look and turn 20 s → answer 15 s → reveal 15 s.</li><li>Each player turns their own view: drag, tilt or 90° snaps.</li><li>Structures are heightmaps made on the server.</li><li>Difficulty sets size, looking time and how freely you can turn.</li><li>Scoring: exact 3, within 5% 2, within 10% 1.</li><li>The answer never reaches a browser before the reveal.</li></ul>`,
+      key: 'Simple to play, satisfying to get exactly right.' },
+  ],
+},
+{
+  id: 'memory-poker', phase: 1, title: 'Memory Poker', folder: 'rose', mins: '7 min', level: 'Game 2',
+  summary: 'Memorize 12 face-up cards by letter, then pick two letters to build the best poker hand with three shared cards.',
+  stats: [['Cards', '12 (3 × 4)'], ['Memorize', '20 s'], ['Main deck', '3 cards'], ['You pick', '2 letters']],
+  legend: [],
+  decisions: ['Can two players pick the same card, or does the first lock win it?', 'Points by placing (3/2/1), or by hand strength?', 'Show everyone’s picks at showdown, or only the winner’s?'],
+  els: {
+    gridUp: { type: 'custom', draw: () => DEAL.map((c, i) => card(...gpos(i), c, { letter: LETTERS[i] })).join('') },
+    gridDown: { type: 'custom', draw: () => LETTERS.map((L, i) => card(...gpos(i), null, { letter: L })).join('') },
+    pickHi: { type: 'custom', draw: () => [0, 5].map(i => card(...gpos(i), null, { letter: LETTERS[i], pick: true })).join('') },
+    timer: { type: 'pill', x: -140, y: -160, text: 'memorize · 0:20', fs: 12.5, tone: 'yellow' },
+    flipped: { type: 'pill', x: -140, y: -160, text: 'face down · letters stay', fs: 12.5 },
+    deck: { type: 'custom', draw: () => pill(150, -95, 'main deck', { fs: 12.5, tone: 'violet' }) + COMM.map((c, i) => card(90 + i * 60, -15, c)).join('') },
+    phone: { type: 'custom', draw: () => phone(385, 20, pokerPhone()) },
+    showdown: { type: 'custom', draw: () => [
+      [-150, SHIRTS[2], 'bob', 3, 1, 'A + F', ['K♠', 'K♥'], 'Three Kings → 3 pts', 'green'],
+      [-10, SHIRTS[1], 'spiky', 1, 3, 'B + L', ['7♦', '7♣'], 'Three Sevens → 2 pts', null],
+      [130, SHIRTS[4], 'long', 2, 0, 'D + F', ['Q♥', 'K♥'], 'Pair of Kings → 1 pt', null],
+    ].map(([y, sh, hr, hc, sk, picks, own, hand, tone], r) =>
+      charSVG({ x: -420, y: y + 38, s: .8, shirt: sh, hair: hr, hc: HAIRC[hc], skin: SKIN[sk] }) + pill(-340, y, picks, { fs: 12 }) +
+      own.map((c, i) => card(-260 + i * 64, y, c, { pick: true })).join('') + txt(-150, y + 6, '+', 18) +
+      COMM.map((c, i) => card(-104 + i * 60, y, c)).join('') + pill(175, y, hand, { fs: 12, tone }) +
+      (r === 2 ? pill(175, y + 36, 'thought D was a King', { fs: 11, tone: 'rose' }) : '')).join('') },
+    scoring: { type: 'pill', x: 0, y: -250, text: 'best hand 3 · second 2 · third 1 · ties share', fs: 12, tone: 'violet' },
+    diffs: { type: 'custom', draw: () => [[-280, 'green', 'Easy', '30 s look', '25 s to pick'], [0, 'yellow', 'Medium', '20 s look', '20 s to pick'], [280, 'rose', 'Hard', '12 s look', '15 s to pick']]
+      .map(([x, hue, l, sub, p]) => render({ type: 'block', x, y: 60, a: 66, h: 48, hue, label: l, sub, icon: 'cards' }) + pill(x, 130, p, { fs: 12 })).join('') +
+      pill(0, -150, 'same 3 × 4 grid and 3-card main deck at every level', { fs: 12, tone: 'violet' }) },
+    server: { type: 'custom', draw: () => render({ type: 'block', x: -270, y: 20, a: 70, h: 52, hue: 'blue', label: 'Server', sub: 'dealer + judge', icon: 'server' }) +
+      [['shuffles with a secure random source', -170, 'blue'], ['sends card faces only during the 20 s', -115, 'yellow'], ['keeps picks hidden until showdown', -60, 'violet'], ['ranks every hand, splits ties', -5, 'green'], ['a screenshot can still cheat → house rule', 85, 'rose']]
+        .map(([t, y, tone]) => `<path class="lead" d="M-190 ${Math.max(-60, Math.min(20, y))} L-10 ${y}"/>` + pill(150, y, t, { fs: 12, tone })).join('') },
+  },
+  steps: [
+    { short: 'Deal', tag: 'CONCEPT', title: '12 cards, face up, 20 seconds', add: ['gridUp', 'timer'], hi: ['gridUp'],
+      body: `<p>The server deals 12 cards from a normal deck into a 3 × 4 grid. Each position has a letter, <b>A</b> to <b>L</b>.</p><p>Everyone sees the same grid for 20 seconds and tries to remember which card is under which letter.</p>`,
+      key: 'You’re memorizing positions, not just cards: “the Kings were A and F.”' },
+    { short: 'Flip', tag: 'CONCEPT', title: 'The cards turn face down', remove: ['gridUp', 'timer'], add: ['gridDown', 'flipped'], hi: ['gridDown'],
+      body: `<p>When the timer ends, every card flips. Only the letters stay visible.</p><p>From here on it’s memory only. Nobody is told what they’re looking for yet.</p>`,
+      key: 'You memorize before you know which cards will matter. That’s the tension.' },
+    { short: 'Main deck', tag: 'CONCEPT', title: 'Three main-deck cards are revealed', add: ['deck'], hi: ['deck'],
+      body: `<p>Three cards from the rest of the deck are turned up for everyone. They are shared and are part of every player’s hand.</p><p>Here: <b>K♦ 7♥ 2♠</b>. Now you know what to hunt for: another two Kings would be great.</p>`,
+      key: 'The main deck turns memory into a decision.' },
+    { short: 'Pick', tag: 'CONCEPT', title: 'Pick two letters on your phone', add: ['phone', 'pickHi'], hi: ['phone', 'pickHi'],
+      body: `<p>Each player privately picks two letters, say <b>A + F</b>, and locks them in within 20 seconds.</p><p>Your hand is your 2 picked cards plus the 3 main-deck cards: a normal 5-card poker hand.</p>`,
+      key: 'Your picks stay secret until the showdown, so nobody can copy them.' },
+    { short: 'Showdown', tag: 'CONCEPT', title: 'Showdown', remove: ['gridDown', 'flipped', 'deck', 'phone', 'pickHi'], add: ['showdown'], hi: ['showdown'],
+      body: `<p>Everyone’s picks flip over and the server ranks the hands with normal poker rules:</p><ul><li>Mina picked A + F: K♠ K♥ → <b>three Kings</b>.</li><li>Jae picked B + L: 7♦ 7♣ → three Sevens.</li><li>Sol picked D + F, thinking D was a King. It was Q♥ → pair of Kings.</li></ul>`,
+      key: 'A memory mistake just becomes a weaker hand, which is funny and fair.' },
+    { short: 'Scoring', tag: 'DECISION', title: 'Points for the best hands', add: ['scoring'], hi: ['scoring'],
+      body: `<p>Points by placing: best hand <b>3</b>, second <b>2</b>, third <b>1</b>. Equal hands share the placing.</p><p>Both players may pick the same card in this version, since picks are private. A spicier variant: the <b>first to lock in</b> a card gets it, so speed and bluffing matter.</p>`,
+      key: 'Placing points keep every round worth the same.' },
+    { short: 'Difficulty', tag: 'DECISION', title: 'Three difficulty levels', remove: ['showdown', 'scoring'], add: ['diffs'], hi: ['diffs'],
+      body: `<ul><li><b>Easy:</b> 30 s to memorize, 25 s to pick.</li><li><b>Medium:</b> 20 s and 20 s (your spec).</li><li><b>Hard:</b> 12 s and 15 s.</li></ul><p>The grid stays 3 × 4 at every level, so the rules never change; only the clock does.</p>`,
+      key: 'Same game, tighter clock.' },
+    { short: 'Server', tag: 'TECHNIQUE', title: 'The server is dealer and judge', remove: ['diffs'], add: ['server'], hi: ['server'],
+      body: `<p>The server shuffles, deals, times every phase and ranks hands with a small hand evaluator, which needs good tests.</p><p>Card faces are only sent during the memorize window. Remote players could still take a screenshot, and no website can stop that. For friends, a house rule (“no screenshots”) is enough.</p>`,
+      key: 'Protect what software can protect, and use a house rule for the rest.' },
+    { short: 'Recap', tag: 'RECAP', title: 'Recap', remove: ['server'], add: ['gridDown', 'deck'],
+      body: `<ul><li>Round: memorize 20 s → main deck → pick 20 s → showdown.</li><li>Hand = your 2 letters + 3 main-deck cards.</li><li>Best hand 3, second 2, third 1. Ties share.</li><li>Difficulty only changes the timers.</li><li>The server deals, hides picks and judges.</li></ul>`,
+      key: 'Memory, then poker. Two skills in one minute.' },
+  ],
+},
+{
+  id: 'phase1-build', phase: 1, title: 'Phase 1 Build Order', folder: 'stone', mins: '3 min', level: 'Plan',
+  summary: 'Five steps to a playable game night. The Den waits for phase 2.',
+  stats: [['Steps', '5'], ['First playable', 'G2'], ['Games', '2'], ['Then', 'Phase 2']],
+  legend: [],
+  decisions: ['Agree on the build order', 'Which game is built first?', 'Who joins the first playtest?'],
+  els: Object.fromEntries([
+    ['g1', 'Rooms + setup', 'yellow'], ['g2', 'Engine + Cube Count', 'blue'], ['g3', 'Memory Poker', 'rose'], ['g4', 'Scores + podium', 'green'], ['g5', 'Online playtest', 'violet'],
+  ].map(([id, sub, hue], i) => [id, { type: 'block', x: -360 + i * 180, y: 190 - i * 78, a: 56, h: 26 + i * 10, hue, label: id.toUpperCase(), sub, fs: 16 }])),
+  steps: [
+    { short: 'G1', tag: 'TECHNIQUE', title: 'G1: Rooms and setup', add: ['g1'], hi: ['g1'],
+      body: `<p>Create a room, join with a code, a lobby with names and looks, and the host’s game picker with difficulty and length.</p><p><b>Done when:</b> four browser tabs join one room and the host can set up a playlist.</p>`,
+      key: 'Rooms first. Every game sits on top.' },
+    { short: 'G2', tag: 'TECHNIQUE', title: 'G2: Room engine + Cube Count', add: ['g2'], hi: ['g2'],
+      body: `<p>The phase and timer engine, the game-module interface, and Cube Count: generator, isometric drawing, number pad, layer reveal, scoring.</p><p><b>Done when:</b> a full 5-round Cube Count game can be played. <b>First playtest.</b></p>`,
+      key: 'The simplest game proves the engine.' },
+    { short: 'G3', tag: 'TECHNIQUE', title: 'G3: Memory Poker', add: ['g3'], hi: ['g3'],
+      body: `<p>Dealing, the card grid and flip, the main deck, letter picks, showdown, and a tested poker hand evaluator.</p><p><b>Done when:</b> a playlist of both games runs back to back.</p>`,
+      key: 'The second game proves the modules really are plug-in.' },
+    { short: 'G4', tag: 'TECHNIQUE', title: 'G4: Scores and the podium', add: ['g4'], hi: ['g4'],
+      body: `<p>Game standings, pieces for placings, the final-round ×2, tie rules and the final podium with characters.</p>`,
+      key: 'This is where the night feels like a show.' },
+    { short: 'G5', tag: 'TECHNIQUE', title: 'G5: Online playtest', add: ['g5'], hi: ['g5'],
+      body: `<p>Deploy, handle reconnects, and run a real game night over Discord. Tune timers and round counts from what we see.</p><p>Then phase 2 starts: The Den as the next game module.</p>`,
+      key: 'Real players will change the numbers. Plan for that.' },
+  ],
+},
+{
+  id: 'big-picture', title: 'The Big Picture', folder: 'blue', mins: '6 min', level: 'Foundation',
+  summary: 'Who talks to whom: browsers, one game server, and a shared rulebook.',
+  stats: [['Updates', '20 / s'], ['Players', '4–10'], ['Servers', '1'], ['Source of truth', 'server']],
+  legend: [['#ef9a52', 'player input'], ['#7fc278', 'game state'], ['transparent', 'dashed = shares code']],
+  decisions: ['Hosting: Render, Railway or Fly.io', 'Voice: Discord call alongside, or built in?', 'One group at a time, or many rooms at once?'],
+  els: {
+    shared: { type: 'block', x: -20, y: -175, a: 50, h: 34, hue: 'violet', label: 'map.js', sub: 'shared rules', icon: 'file', fs: 14 },
+    a_sh_srv: { type: 'arrow', from: [28, -175], to: [180, -95], dashed: true, bend: -10 },
+    a_sh_you: { type: 'arrow', from: [-68, -175], to: [-290, -110], dashed: true, bend: 10 },
+    a_in: { type: 'arrow', from: [-275, -40], to: [160, -40], bend: -45, flow: 'req', label: 'input  {dx:-1}', tone: 'orange' },
+    a_out_you: { type: 'arrow', from: [160, -5], to: [-270, 0], bend: -45, flow: 'res', label: 'state for you' },
+    a_out_fr: { type: 'arrow', from: [180, 30], to: [-110, 160], bend: 25, flow: 'res', label: 'state for friend', dur: 2.1 },
+    you: { type: 'device', x: -330, y: -10, label: 'you', char: { shirt: SHIRTS[2], hair: 'bob', hc: HAIRC[3], state: 'walk' } },
+    friend: { type: 'device', x: -170, y: 175, label: 'friend', char: { shirt: SHIRTS[1], hair: 'spiky', skin: SKIN[3], hc: HAIRC[1] } },
+    server: { type: 'block', x: 235, y: 10, a: 70, h: 54, hue: 'blue', label: 'Game Server', sub: 'Node.js · ws', icon: 'server' },
+    tick: { type: 'pill', x: 235, y: -125, text: 'every tick: move · walls · rules · win?', fs: 12, tone: 'green' },
+    bad: { type: 'pill', x: 40, y: 245, text: '✕ no server = every browser knows the roles', fs: 12.5, tone: 'rose' },
+    host: { type: 'pill', x: 300, y: 95, text: 'hosted on Render / Fly.io', fs: 12 },
+    voice: { type: 'pill', x: -330, y: -150, text: 'voice: Discord call', fs: 12, tone: 'violet' },
+  },
+  steps: [
+    { short: 'One link', tag: 'CONCEPT', title: 'Everyone opens one link', add: ['you', 'friend', 'server'],
+      body: `<p>Players open a web page. It connects to one game server over a <b>WebSocket</b>, a connection that stays open in both directions for the whole match.</p><p>Nobody installs anything, so it works the same on a laptop or a phone.</p>`,
+      key: 'The server is the referee. Each browser is a screen and a controller, nothing more.' },
+    { short: 'Press a key', tag: 'TECHNIQUE', title: 'You press a key', add: ['a_in'], hi: ['a_in'],
+      body: `<p>Your browser does <b>not</b> move your character. It tells the server what you want: <code>"holding left"</code>.</p><p>The message is a few bytes and is sent only when your keys change.</p>`,
+      key: 'Send intent, not results. The server decides if you can actually move there.' },
+    { short: 'Simulate', tag: 'TECHNIQUE', title: 'The server runs the game', add: ['tick'], hi: ['server', 'tick'],
+      body: `<p>Twenty times a second the server moves everyone, stops them at walls, ticks timers, and checks kills, tasks and wins.</p><p>There is exactly one copy of the truth, so two players can never disagree about what happened.</p>`,
+      key: 'One authority means no arguments and no desync.' },
+    { short: 'Your view', tag: 'CONCEPT', title: 'Everyone gets their own picture', add: ['a_out_you', 'a_out_fr'], hi: ['a_out_you', 'a_out_fr'],
+      body: `<p>After each tick the server builds a <b>separate</b> update for each player. Yours holds only the people near you, your own role and your own tasks.</p><p>Your friend gets a different update with different secrets in it.</p>`,
+      key: 'Filtering is the anti-cheat. You can’t read a secret that was never sent to you.' },
+    { short: 'Shared rules', tag: 'TECHNIQUE', title: 'One rulebook, two readers', add: ['shared', 'a_sh_srv', 'a_sh_you'], hi: ['shared'],
+      body: `<p>The map shape and the numbers (speed, kill range, cooldowns) live in one file, <code>map.js</code>, that both server and browser load.</p><p>Change a number once and both sides agree. What you see always matches where the walls really are.</p>`,
+      key: 'Shared code prevents a whole class of “but it looked like I could walk there” bugs.' },
+    { short: 'Why a server', tag: 'PROBLEM', title: 'Why not let browsers talk directly?', add: ['bad'], hi: ['bad'],
+      body: `<p>Peer-to-peer sounds cheaper, but someone has to know who the Devil is. If every browser holds the full game, anyone can open developer tools and read the roles.</p><p>In a game built on lying, that ends the game.</p>`,
+      key: 'Hidden-role games need a trusted middle. That is the server.' },
+    { short: 'Hosting', tag: 'DECISION', title: 'Hosting and voice for remote play', add: ['host', 'voice'], remove: ['bad'], hi: ['host', 'voice'],
+      body: `<p>One small Node server is enough for a friend group. Render, Railway and Fly.io all run it for free or a few dollars a month.</p><p>For talking, a Discord call next to the game is simpler and better than building voice in.</p><p>For quick tests, a tunnel such as <code>cloudflared</code> can share a laptop’s server.</p>`,
+      key: 'Don’t build what Discord already does well.' },
+    { short: 'Recap', tag: 'RECAP', title: 'Recap', hi: ['server'],
+      body: `<ul><li>Browsers send <b>intent</b> (keys, clicks, votes).</li><li>The server <b>simulates</b> 20× a second and owns the truth.</li><li>Each player receives a <b>filtered</b> view.</li><li>Map and rules are <b>shared</b> code.</li></ul>`,
+      key: 'Thin clients, smart server, filtered views.' },
+  ],
+},
+{
+  id: 'phases', title: 'Phases of a Match', folder: 'green', mins: '7 min', level: 'Game flow',
+  summary: 'A match is a loop of phases. The phase decides what anyone is allowed to do.',
+  stats: [['Meeting', '90 s'], ['Result screen', '6 s'], ['Kill cooldown', '25 s'], ['Tasks each', '4']],
+  legend: [['transparent', 'solid = normal flow'], ['transparent', 'dashed = a win was detected']],
+  decisions: ['Reveal the ejected player’s role, or keep it secret?', 'Meeting length (60 / 90 / 120 s)', 'Devils per game: 1 below 7 players, 2 above?'],
+  els: {
+    a1: { type: 'arrow', from: [-295, -105], to: [-205, -170], bend: -8 },
+    a2: { type: 'arrow', from: [-95, -190], to: [30, -135], bend: -12 },
+    a3: { type: 'arrow', from: [150, -85], to: [285, -20], bend: -18, label: 'body / button', lo: [24, -8] },
+    a4: { type: 'arrow', from: [310, 75], to: [190, 165], bend: -18, label: 'all voted or 90 s', lo: [30, 12] },
+    a5: { type: 'arrow', from: [95, 100], to: [95, -40], bend: 25, label: 'no winner yet', lo: [-26, 0] },
+    a6: { type: 'arrow', from: [30, -60], to: [-125, 95], dashed: true, bend: 10, label: 'win', lo: [-6, -4] },
+    a7: { type: 'arrow', from: [60, 175], to: [-100, 160], dashed: true, bend: 10, label: 'win' },
+    a8: { type: 'arrow', from: [-225, 85], to: [-320, -20], bend: -15, label: 'host restarts', lo: [-40, 6] },
+    lobby: { type: 'block', x: -330, y: -55, a: 56, h: 40, hue: 'stone', label: 'Lobby', icon: 'users' },
+    reveal: { type: 'block', x: -150, y: -170, a: 56, h: 40, hue: 'violet', label: 'Roles', icon: 'mask' },
+    play: { type: 'block', x: 90, y: -78, a: 66, h: 48, hue: 'green', label: 'Play', icon: 'play' },
+    meeting: { type: 'block', x: 320, y: 45, a: 58, h: 42, hue: 'orange', label: 'Meeting', icon: 'chat' },
+    result: { type: 'block', x: 120, y: 175, a: 56, h: 40, hue: 'yellow', label: 'Result', icon: 'vote' },
+    over: { type: 'block', x: -170, y: 150, a: 58, h: 42, hue: 'rose', label: 'Game over', icon: 'trophy', fs: 14 },
+  },
+  steps: [
+    { short: 'Lobby', tag: 'CONCEPT', title: 'Lobby: gather and get dressed', add: ['lobby'], hi: ['lobby'],
+      body: `<p>Players join with a name and pick their look (hair, hair color, skin). The first person in is the <b>host</b> and presses Start.</p><p>Minimum 3 players to test, 5 or more to be fun.</p>`,
+      key: 'The lobby also shows everyone’s pieces from earlier matches.' },
+    { short: 'Roles', tag: 'CONCEPT', title: 'Secret roles are dealt', add: ['reveal', 'a1'], hi: ['reveal'],
+      body: `<p>The server shuffles players and picks the Devils: 1 Devil below 7 players, 2 from 7 up. Each player sees a 3-second splash with their own role only.</p><p>Devils also learn who the other Devils are.</p>`,
+      key: 'Roles are dealt on the server and sent privately, one player at a time.' },
+    { short: 'Play', tag: 'CONCEPT', title: 'Play: tasks, hunting, suspicion', add: ['play', 'a2'], hi: ['play'],
+      body: `<ul><li>Everyone walks around with limited vision.</li><li>Players do tasks (+1 piece each).</li><li>Devils fake tasks and can eliminate someone in range every 25 s.</li><li>Anyone can report a body or press the emergency button (once each).</li></ul><p>No public chat during play, but private whispers are allowed.</p>`,
+      key: 'Silence in play, talking in meetings. That rhythm makes the game.' },
+    { short: 'Meeting', tag: 'CONCEPT', title: 'Meeting: argue, then vote', add: ['meeting', 'a3'], hi: ['meeting'],
+      body: `<p>Everyone freezes. For 90 seconds the living chat and each casts one vote: a player or <b>skip</b>. Spending 2 pieces makes your vote count double.</p><p>The meeting ends early when every living player has voted.</p>`,
+      key: 'Votes are final once cast, so timing your vote is a strategy.' },
+    { short: 'Result', tag: 'DECISION', title: 'Result: who goes?', add: ['result', 'a4', 'a5'], hi: ['result'],
+      body: `<p>The most-voted player is ejected. A tie or a skip ejects nobody. The screen shows the vote counts for 6 seconds, then play resumes with everyone back at spawn.</p><p><b>Decision:</b> do we say whether they were a Devil? Showing it is fairer. Hiding it creates more paranoia, which suits Devil’s Plan.</p>`,
+      key: 'This single rule changes how the whole game feels.' },
+    { short: 'Win check', tag: 'TECHNIQUE', title: 'Checking for a winner', add: ['over', 'a6', 'a7'], hi: ['over'],
+      body: `<p>The server checks for a winner after every kill, finished task, ejection and disconnect:</p><ul><li><b>Players win</b> if every Devil is out or all tasks are done.</li><li><b>Devils win</b> once they equal or outnumber everyone else.</li></ul>`,
+      key: 'Check the win in one function and call it after anything that changes who is alive.' },
+    { short: 'Again', tag: 'CONCEPT', title: 'Back to the lobby, pieces kept', add: ['a8'], hi: ['lobby'],
+      body: `<p>The winning side gets +3 pieces each. The host sends everyone back to the lobby. Pieces carry over, so a game night becomes a <b>series</b>.</p>`,
+      key: 'The match ends, but the score keeps running. That’s the Devil’s Plan layer.' },
+    { short: 'Recap', tag: 'RECAP', title: 'Recap', hi: ['play', 'meeting'],
+      body: `<p>Every incoming message is checked against the phase first: no moving in meetings, no voting in play, no killing in the lobby.</p><p>Six phases, one loop. Most bugs in games like this come from an action being allowed in the wrong phase.</p>`,
+      key: 'The phase is the first rule.' },
+  ],
+},
+{
+  id: 'visibility', title: 'Who Sees What', folder: 'violet', mins: '6 min', level: 'Hidden information',
+  summary: 'The server knows everything. Each player is sent only what their character could see.',
+  stats: [['Player vision', '260 px'], ['Devil vision', '340 px'], ['Ghost vision', 'everything'], ['Sent', 'per player']],
+  legend: [['#7fc278', 'your vision'], ['#d0563a', 'Devil vision']],
+  decisions: ['Simple radius, or walls block sight?', 'Can ghosts talk to each other?', 'Should Devils see each other’s names in red?'],
+  els: {
+    floor: { type: 'slab', x: 0, y: 90, a: 310, h: 14, hue: 'stone' },
+    vis_you: { type: 'vision', x: -30, y: 80, rx: 130 },
+    vis_dv: { type: 'vision', x: 120, y: 30, rx: 170, devil: true },
+    d: { type: 'char', x: 30, y: -40, shirt: SHIRTS[4], hair: 'long', hc: HAIRC[2], skin: SKIN[1] },
+    dv: { type: 'char', x: 120, y: 30, shirt: SHIRTS[5], hair: 'crop', hc: HAIRC[1], skin: SKIN[2], state: 'walk' },
+    gh: { type: 'char', x: -95, y: 35, shirt: SHIRTS[8], hair: 'bun', hc: HAIRC[4], state: 'ghost' },
+    you: { type: 'char', x: -30, y: 80, shirt: SHIRTS[2], hair: 'bob', hc: HAIRC[3], state: 'walk' },
+    b: { type: 'char', x: -135, y: 110, shirt: SHIRTS[1], hair: 'spiky', skin: SKIN[3], hc: HAIRC[1] },
+    c: { type: 'char', x: 210, y: 92, shirt: SHIRTS[3], hair: 'afro', skin: SKIN[4], hc: HAIRC[1] },
+    t_you: { type: 'pill', x: -30, y: 104, text: 'you', fs: 11 },
+    t_dv: { type: 'pill', x: 120, y: 54, text: 'Devil', fs: 11, tone: 'rose' },
+    t_gh: { type: 'pill', x: -95, y: -42, text: 'ghost', fs: 11 },
+    server: { type: 'block', x: -360, y: -175, a: 48, h: 34, hue: 'blue', label: 'Server', icon: 'server', fs: 13 },
+    t_srv: { type: 'pill', x: -360, y: -115, text: 'knows every position', fs: 11 },
+    meet: { type: 'pill', x: 0, y: -230, text: 'meeting: everyone listed, no positions needed', fs: 12, tone: 'orange' },
+    los: { type: 'pill', x: 0, y: -230, text: 'v2 idea: walls cast shadows', fs: 12, tone: 'yellow' },
+  },
+  steps: [
+    { short: 'Full truth', tag: 'CONCEPT', title: 'The server sees the whole board', add: ['floor', 'd', 'dv', 'gh', 'you', 'b', 'c', 'server', 't_srv'], hi: ['server'],
+      body: `<p>On the server, every position, role, body and timer is known. That full picture is never sent to anyone as it is.</p>`,
+      key: 'Think of the server as the show’s control room. Players are on the floor.' },
+    { short: 'Your view', tag: 'TECHNIQUE', title: 'What a player receives', add: ['vis_you', 't_you'], dim: ['d', 'dv', 'c', 'gh'], hi: ['vis_you'],
+      body: `<p>Your update contains only living players inside your vision radius (about 260 px). Everyone else is simply left out of the message.</p><p>Ghosts are never sent to living players, so you can’t tell who is dead until a body is found.</p>`,
+      key: 'Your browser draws fog, but the fog isn’t the protection. The missing data is.' },
+    { short: 'Devil view', tag: 'TECHNIQUE', title: 'What a Devil receives', add: ['vis_dv', 't_dv'], remove: ['vis_you', 't_you'], dim: ['you', 'b', 'd', 'gh'], hi: ['vis_dv'],
+      body: `<p>Devils see a bit further (about 340 px), see fellow Devils marked in red, and get a kill-cooldown timer.</p><p>Their Kill button lights up only when a target is in range, and the server checks the range again when it arrives.</p>`,
+      key: 'Never trust the button. The server re-checks every action.' },
+    { short: 'Ghost view', tag: 'CONCEPT', title: 'Ghosts see everything', add: ['t_gh'], remove: ['vis_dv', 't_dv'], hi: ['gh'],
+      body: `<p>Eliminated players become ghosts. They float through walls, see the whole map, and can still finish tasks to help their team.</p><p>They can’t vote or talk to the living. Ghost chat only reaches other ghosts.</p>`,
+      key: 'Ghosts stay in the game, so dying early isn’t boring.' },
+    { short: 'Meetings', tag: 'CONCEPT', title: 'Meetings show everyone', add: ['meet'], remove: ['t_gh'], hi: ['meet'],
+      body: `<p>During a meeting every player is listed, alive or dead, so people can vote. Positions don’t matter here, because everyone teleports back to spawn afterwards.</p>`,
+      key: 'What’s secret depends on the phase.' },
+    { short: 'Walls', tag: 'TRADE-OFF', title: 'Upgrade: walls block sight', add: ['los'], remove: ['meet'], hi: ['los'],
+      body: `<p>A radius is simple, but walls that block vision make corners and doorways matter: you can hide, ambush and lose sight of people.</p><p><b>Cost:</b> the server works out a visibility shape for each player each tick, and the browser draws shadows. That’s cheap on a small map but takes a few days to build well.</p>`,
+      key: 'Version 1 uses a radius. Line of sight is a strong second milestone.' },
+    { short: 'Recap', tag: 'RECAP', title: 'Recap',
+      body: `<ul><li>The server holds the full truth.</li><li>Each player is sent only what their character can see.</li><li>Roles change the view: players, Devils, ghosts.</li><li>Every action is re-checked on the server.</li></ul>`,
+      key: 'Design for the player who opens developer tools.' },
+  ],
+},
+{
+  id: 'map', title: 'The Map', folder: 'orange', mins: '6 min', level: 'World',
+  summary: 'Seven rooms joined by corridors, twelve task stations, one emergency button.',
+  stats: [['World', '1600 × 1100'], ['Rooms', '7'], ['Task stations', '12'], ['Walk speed', '180 px/s']],
+  legend: [['#f6df97', 'task station'], ['#f6cad0', 'emergency button']],
+  decisions: ['Flat top-down look, or isometric like this page?', 'Draw rooms in code, or in the Tiled editor?', 'Room theme: casino and vault, or something else?'],
+  els: { ...mapEls },
+  steps: [
+    { short: 'Rooms', tag: 'CONCEPT', title: 'Seven rooms', add: ['rooms', 'labels'],
+      body: `<p>The Cafeteria (top middle) is home base. The Vault and Lab sit on top, the Casino, Library and Engine Room at the bottom, and the Great Hall runs through the middle.</p>`,
+      key: 'Name rooms after things. “I saw them in the Vault” is easier to say than “top left”.' },
+    { short: 'Corridors', tag: 'TECHNIQUE', title: 'Corridors and walls', add: ['corridors'], hi: ['corridors'],
+      body: `<p>The map is a list of rectangles. You can stand anywhere inside one. Collision checks the four corners of your character: if any corner leaves every rectangle, you stop.</p><p>Movement is checked one axis at a time, so you slide along walls instead of sticking.</p>`,
+      key: 'Simple geometry, so every rule is easy to check on the server.' },
+    { short: 'Tasks', tag: 'CONCEPT', title: 'Task stations', add: ['tasks'], hi: ['tasks'],
+      body: `<p>Twelve stations are spread across every room. Each player gets 4 at random, so routes differ and people split up.</p><p>Two kinds for now: <b>hold</b> (hold a button for 3 s) and <b>sequence</b> (tap numbers in order). Devils get fake tasks so they can blend in.</p>`,
+      key: 'Tasks exist to spread people out, and spread-out people are vulnerable.' },
+    { short: 'Button', tag: 'CONCEPT', title: 'Spawn and the emergency button', add: ['button', 'spawn'], hi: ['button'],
+      body: `<p>Everyone starts around the Cafeteria table, where the emergency button is. Each living player can press it once per match to call a meeting.</p>`,
+      key: 'Putting the button at spawn makes the Cafeteria a social hub.' },
+    { short: 'Flow', tag: 'TRADE-OFF', title: 'Dead ends are dangerous', add: ['deadend'], hi: ['hall'],
+      body: `<p>The Vault and Lab each have one way in (plus a side door to the Cafeteria). Rooms with a single exit are where Devils hunt.</p><p>That’s fine, but we should playtest it. Adding vents or shortcuts for Devils is a common next step.</p>`,
+      key: 'Map shape is game balance. Expect to adjust it after the first playtest.' },
+    { short: 'Editor', tag: 'DECISION', title: 'Rectangles in code, or a map editor?', remove: ['deadend'],
+      body: `<p><b>Rectangles in code</b> (now): fast to start and easy to read, but redesigning is fiddly.</p><p><b>Tiled editor</b>: draw rooms visually, add furniture and art layers, export JSON. Worth switching once we want real art.</p>`,
+      key: 'Start in code and move to Tiled when the layout settles.' },
+    { short: 'Look', tag: 'DECISION', title: 'Flat or isometric?', hi: ['rooms'],
+      body: `<p>Game logic stays flat 2D either way. <b>Isometric</b> only changes how we draw it, using the same projection as this page.</p><p>Isometric looks great and matches this style. The extra work is drawing order (things behind walls) and taller art.</p>`,
+      key: 'Logic in 2D, looks in 2.5D. The two are separate decisions.' },
+  ],
+},
+{
+  id: 'characters', title: 'Characters', folder: 'rose', mins: '7 min', level: 'Art direction',
+  summary: 'Chunky little humans: real hair, a blank face, your shirt in your player color.',
+  stats: [['In-game height', '~48 px'], ['Hair styles', '6'], ['Skin tones', '5'], ['Possible looks', '2,160']],
+  legend: [],
+  decisions: ['Front-facing only, or turn left and right?', 'Keep the small arms, or a pure bean shape?', 'Let players choose shirt color, or assign it?'],
+  els: {
+    heroSlab: { type: 'slab', x: 0, y: 200, a: 95, h: 14, hue: 'stone' },
+    hero: { type: 'char', x: 0, y: 186, s: 2.75, shirt: SHIRTS[0], hair: 'bob', hc: HAIRC[0], skin: SKIN[1] },
+    n1: { type: 'pill', x: -265, y: -20, text: 'round head, blank face', fs: 12.5 }, l1: { type: 'lead', from: [-170, -18], to: [-35, 30] },
+    n2: { type: 'pill', x: 265, y: -40, text: 'hair = who you are', fs: 12.5 }, l2: { type: 'lead', from: [180, -38], to: [40, -2] },
+    n3: { type: 'pill', x: 280, y: 105, text: 'shirt = player color', fs: 12.5 }, l3: { type: 'lead', from: [185, 105], to: [40, 110] },
+    n4: { type: 'pill', x: -260, y: 165, text: 'short legs, small arms', fs: 12.5 }, l4: { type: 'lead', from: [-168, 165], to: [-25, 168] },
+    hairRow: { type: 'custom', draw: () => ['crop', 'bob', 'bun', 'spiky', 'long', 'afro'].map((h, i) => {
+      const x = -375 + i * 150, y = 120;
+      return prism(x, y + 14, 46, 12, 'stone') + charSVG({ x, y, s: 1.75, hair: h, shirt: SHIRTS[[1, 0, 4, 2, 6, 5][i]], hc: HAIRC[[1, 3, 0, 2, 4, 1][i]], skin: SKIN[[0, 1, 2, 0, 3, 4][i]] }) + pill(x, y + 62, h, { fs: 12 });
+    }).join('') },
+    colorRow: { type: 'custom', draw: () => SHIRTS.map((c, i) => {
+      const x = -375 + (i % 6) * 150, y = i < 6 ? -10 : 175;
+      return charSVG({ x, y, s: 1.2, shirt: c, hair: ['crop', 'bob', 'bun', 'spiky', 'long', 'afro'][(i * 5) % 6], hc: HAIRC[i % 6], skin: SKIN[(i * 3) % 5] });
+    }).join('') + pill(0, -205, '12 shirt colors · 5 skin tones · 6 hair colors', { fs: 12.5, tone: 'yellow' }) },
+    faceNote: { type: 'pill', x: 0, y: -245, text: 'no face = no free tells', fs: 13, tone: 'violet' },
+    states: { type: 'custom', draw: () => [
+      ['walking', { state: 'walk', shirt: SHIRTS[2], hair: 'spiky', hc: HAIRC[0] }],
+      ['ghost', { state: 'ghost', shirt: SHIRTS[1], hair: 'long', hc: HAIRC[2], skin: SKIN[1] }],
+      ['eliminated', { state: 'dead', shirt: SHIRTS[3], hair: 'afro', hc: HAIRC[1], skin: SKIN[4] }],
+      ['Devil · end screen only', { state: 'devil', shirt: SHIRTS[5], hair: 'crop', hc: HAIRC[1], skin: SKIN[2] }],
+    ].map(([name, o], i) => { const x = -330 + i * 220, y = 140; return prism(x, y + 14, 60, 12, i === 3 ? 'rose' : 'stone') + charSVG({ ...o, x, y: i === 1 ? y - 16 : y, s: 1.9 }) + pill(x, y + 62, name, { fs: 12, tone: i === 3 ? 'rose' : undefined }); }).join('') },
+    layers: { type: 'custom', draw: () => charSVG({ x: -150, y: 200, s: 2.4, explode: 13, shirt: SHIRTS[6], hair: 'bun', hc: HAIRC[3], skin: SKIN[2] }) +
+      [['hair: 6 shapes, tinted', -10], ['head: skin tone', 61], ['shirt + arms: player color', 145], ['legs: shirt, darker', 215]]
+        .map(([t, y]) => `<path class="lead" d="M-90 ${y} L60 ${y}"/>` + pill(60 + t.length * 3.9 + 13, y, t, { fs: 12.5 })).join('') +
+      pill(120, -235, '6 × 5 × 6 × 12 = 2,160 looks', { fs: 12.5, tone: 'yellow' }) },
+    lobbyRow: { type: 'custom', draw: () => [[SHIRTS[0], 'bob', 3, 1], [SHIRTS[1], 'spiky', 1, 3], [SHIRTS[4], 'long', 2, 0], [SHIRTS[3], 'afro', 1, 4], [SHIRTS[6], 'bun', 0, 2]]
+      .map(([sh, h, hc, sk], i) => charSVG({ x: -300 + i * 150, y: 150 - (i % 2) * 30, s: 1.7, shirt: sh, hair: h, hc: HAIRC[hc], skin: SKIN[sk], state: i === 2 ? 'walk' : 'idle', flip: i > 2 })).join('') +
+      pill(0, -150, 'lobby: pick hair, hair color, skin', { fs: 13, tone: 'green' }) },
+  },
+  steps: [
+    { short: 'Silhouette', tag: 'CONCEPT', title: 'A chunky little human', add: ['heroSlab', 'hero', 'n1', 'l1', 'n2', 'l2', 'n3', 'l3', 'n4', 'l4'],
+      body: `<p>Big round head, a soft boxy body, short legs, small arms. The proportions are toy-like, so a character still reads clearly at about 48 px tall on a phone.</p><p>The thick dark outline matches the diagram style and keeps characters visible on any floor.</p>`,
+      key: 'Readable at a glance beats detailed. You need to recognize people in half a second.' },
+    { short: 'Hair', tag: 'CONCEPT', title: 'Hair is identity', remove: ['heroSlab', 'hero', 'n1', 'l1', 'n2', 'l2', 'n3', 'l3', 'n4', 'l4'], add: ['hairRow'],
+      body: `<p>With no facial features, the <b>hair shape</b> is how you tell people apart at a distance. Six shapes, each with a clearly different outline: crop, bob, bun, spiky, long, afro.</p>`,
+      key: 'Test each shape as a solid black silhouette. If two look alike, change one.' },
+    { short: 'Color', tag: 'TECHNIQUE', title: 'Shirt color is the player, skin is yours', remove: ['hairRow'], add: ['colorRow'],
+      body: `<p>Each player gets one of 12 shirt colors, which is also their name color in chat and on the vote screen. “Orange was in the Lab” has to mean exactly one person.</p><p>Skin tone and hair color are personal choices and don’t identify the player.</p>`,
+      key: 'One color = one player, everywhere in the interface.' },
+    { short: 'No face', tag: 'CONCEPT', title: 'Why the face is blank', remove: ['colorRow'], add: ['heroSlab', 'hero', 'faceNote'], hi: ['hero'],
+      body: `<p>It’s a lying game. A drawn face would either show emotion that gives something away or look oddly calm all the time. A blank face lets players project onto it, and it’s cheap to draw.</p><p>It also keeps us clear of any one game’s look: these are people, not suits.</p>`,
+      key: 'The tells should come from behavior, not the art.' },
+    { short: 'States', tag: 'TECHNIQUE', title: 'Four states to draw', remove: ['heroSlab', 'hero', 'faceNote'], add: ['states'],
+      body: `<ul><li><b>Walking:</b> a gentle bob and alternating legs (4 frames).</li><li><b>Ghost:</b> see-through, floating, no legs.</li><li><b>Eliminated:</b> lying flat, desaturated.</li><li><b>Devil:</b> small horns and a red glow, shown only on the end screen.</li></ul>`,
+      key: 'Devils look exactly like everyone else until the game is over.' },
+    { short: 'Layers', tag: 'TECHNIQUE', title: 'Built from layers, not drawn by hand', remove: ['states'], add: ['layers'],
+      body: `<p>Each character is stacked from parts: legs, body and arms, head, hair. Each part is tinted with a color. Nobody draws 2,160 sprites; the game combines them.</p><p>That is exactly how the characters on this page are drawn, so this code can go straight into the game.</p>`,
+      key: 'Parts × colors gives a lot of variety from very little art.' },
+    { short: 'Lobby', tag: 'RECAP', title: 'Pick your look in the lobby', remove: ['layers'], add: ['lobbyRow'],
+      body: `<ul><li>Players choose hair style, hair color and skin tone.</li><li>Shirt color is assigned (first free), because it identifies the player.</li><li>Your look carries over across matches in a series.</li></ul>`,
+      key: 'Choose your look, but not your identity color.' },
+  ],
+},
+{
+  id: 'pieces', title: 'The Devil’s Plan Layer', folder: 'yellow', mins: '6 min', level: 'Twist',
+  summary: 'Pieces are the running score: earned in play, spent on power, carried across matches.',
+  stats: [['Finish a task', '+1'], ['Devil elimination', '+1'], ['Winning side', '+3'], ['Double vote', '−2']],
+  legend: [['#7fc278', 'earn'], ['#ef9a52', 'spend']],
+  decisions: ['Which spends make it into version 1?', 'Can players give or trade pieces?', 'Series length and elimination rule'],
+  els: {
+    e1: { type: 'arrow', from: [-285, -135], to: [-80, -40], bend: -10, flow: 'res' },
+    e2: { type: 'arrow', from: [-305, 35], to: [-82, 10], bend: 8, flow: 'res', dur: 2.2 },
+    e3: { type: 'arrow', from: [-245, 175], to: [-60, 55], bend: 10, flow: 'res', dur: 2.5 },
+    s1: { type: 'arrow', from: [80, -40], to: [285, -135], bend: -10, flow: 'req' },
+    s2: { type: 'arrow', from: [82, 10], to: [305, 35], bend: 8, flow: 'req', dur: 2.2 },
+    s3: { type: 'arrow', from: [60, 55], to: [245, 175], bend: 10, flow: 'req', dur: 2.5 },
+    pieces: { type: 'block', x: 0, y: 30, a: 76, h: 56, hue: 'yellow', label: 'Pieces', sub: 'your running score', icon: 'coin', fs: 18 },
+    src: { type: 'custom', draw: () => [[-330, -140, 'green', 'finish a task  +1'], [-355, 40, 'rose', 'Devil elimination  +1'], [-290, 195, 'violet', 'winning side  +3']]
+      .map(([x, y, hue, t]) => prism(x, y, 44, 12, hue) + pill(x, y + 36, t, { fs: 12 })).join('') },
+    spend: { type: 'custom', draw: () => [[330, -140, 'orange', 'double vote  −2', ''], [355, 40, 'blue', 'peek at a role  −3', 'idea'], [290, 195, 'stone', 'extra meeting  −2', 'idea']]
+      .map(([x, y, hue, t, idea]) => prism(x, y, 44, 12, hue) + pill(x, y + 36, t + (idea ? '  (idea)' : ''), { fs: 12 })).join('') },
+    chat: { type: 'block', x: 0, y: -185, a: 48, h: 34, hue: 'violet', label: 'Whispers', icon: 'chat', fs: 13 },
+    trade: { type: 'pill', x: 0, y: -250, text: 'give pieces to buy a promise? (idea)', fs: 12 },
+    series: { type: 'pill', x: 0, y: 250, text: 'series: lowest pieces after 3 matches is out', fs: 12.5, tone: 'green' },
+    roles: { type: 'custom', draw: () => pill(-270, -240, 'Broker: wins with most pieces', { fs: 11.5, tone: 'yellow' }) + pill(280, -240, 'Detective: one free peek', { fs: 11.5, tone: 'blue' }) },
+  },
+  steps: [
+    { short: 'Pieces', tag: 'CONCEPT', title: 'Pieces are the score', add: ['pieces'], hi: ['pieces'],
+      body: `<p>Winning a match isn’t everything. Each player also has a pile of <b>pieces</b> that grows and shrinks with what they do.</p><p>It gives every player, on either side, a personal reason to take risks.</p>`,
+      key: 'A team game with a personal score creates betrayal. That’s the point.' },
+    { short: 'Earn', tag: 'CONCEPT', title: 'How you earn', add: ['src', 'e1', 'e2', 'e3'], hi: ['src'],
+      body: `<ul><li><b>+1</b> for each real task (Devils’ fake tasks earn nothing).</li><li><b>+1</b> for each Devil elimination.</li><li><b>+3</b> to everyone on the winning side.</li></ul>`,
+      key: 'Earning should follow the actions you want more of.' },
+    { short: 'Spend', tag: 'DECISION', title: 'How you spend', add: ['spend', 's1', 's2', 's3'], hi: ['spend'],
+      body: `<p><b>Double vote (−2)</b> is in the first build. The others are candidates:</p><ul><li><b>Peek (−3):</b> privately learn one player’s role.</li><li><b>Extra meeting (−2):</b> buy another emergency call.</li></ul><p>Spending lowers your score, so every purchase is a real trade-off.</p>`,
+      key: 'Power costs score. Do you want to win this match or the series?' },
+    { short: 'Deals', tag: 'CONCEPT', title: 'Whispers and secret deals', add: ['chat', 'trade'], hi: ['chat'],
+      body: `<p>Private messages work at any time, even during play. That’s where alliances, promises and betrayals happen.</p><p>Letting players <b>give</b> pieces to each other would make deals real (“I’ll pay 2 if you vote with me”). It’s powerful but chaotic, so we should playtest it first.</p>`,
+      key: 'A whisper is free. A promise backed by pieces isn’t.' },
+    { short: 'Series', tag: 'DECISION', title: 'A series, not one match', add: ['series'], remove: ['trade'], hi: ['series'],
+      body: `<p>Pieces carry across matches, so a game night becomes a tournament. One option: after every 3 matches, the player with the fewest pieces is eliminated from the series. Another: just crown a winner at the end of the night.</p>`,
+      key: 'The series structure is what makes it feel like Devil’s Plan.' },
+    { short: 'Roles', tag: 'TRADE-OFF', title: 'Twist roles, later', add: ['roles'], remove: ['series'], hi: ['roles'],
+      body: `<p>Once the base game works, extra roles add new ways to play:</p><ul><li><b>Broker:</b> on neither side; wins by finishing with the most pieces.</li><li><b>Detective:</b> one free peek per match.</li></ul><p>Each role is a few server rules, but they need balancing.</p>`,
+      key: 'Add one twist at a time and playtest it before adding the next.' },
+    { short: 'Recap', tag: 'RECAP', title: 'Recap', add: ['series'], remove: ['roles'], hi: ['pieces'],
+      body: `<ul><li>Pieces are a personal score on top of team wins.</li><li>Earn from tasks, eliminations and wins; spend on power.</li><li>Whispers create deals, and the series creates stakes.</li></ul>`,
+      key: 'Teams decide matches. Pieces decide the night.' },
+  ],
+},
+{
+  id: 'roadmap', title: 'The Den Roadmap', folder: 'stone', mins: '4 min', level: 'Plan',
+  summary: 'Six milestones, each ending in something we can play.',
+  stats: [['Milestones', '6'], ['First playable', 'M3'], ['Stack', 'Canvas + Node'], ['Testing', '4 browser tabs']],
+  legend: [],
+  decisions: ['Agree on the milestone order', 'Who playtests M3?', 'Stay with Canvas, or move to Phaser at M5?'],
+  els: Object.fromEntries([
+    ['m1', 'Lobby + walking', 'stone'], ['m2', 'Roles, tasks, kills', 'green'], ['m3', 'Meetings + wins', 'orange'],
+    ['m4', 'Pieces + whispers', 'yellow'], ['m5', 'Characters + art', 'rose'], ['m6', 'Online + playtest', 'blue'],
+  ].map(([id, sub, hue], i) => [id, { type: 'block', x: -375 + i * 150, y: 205 - i * 62, a: 54, h: 26 + i * 9, hue, label: id.toUpperCase(), sub, fs: 16 }])),
+  steps: [
+    { short: 'M1', tag: 'TECHNIQUE', title: 'M1: Lobby and walking', add: ['m1'], hi: ['m1'],
+      body: `<p>Join with a name, see the lobby, the host presses Start, and everyone walks the map with walls and limited vision.</p><p><b>Done when:</b> four browser tabs can move around together without walking through walls.</p>`,
+      key: 'Get the networking right first. Everything else sits on top of it.' },
+    { short: 'M2', tag: 'TECHNIQUE', title: 'M2: Roles, tasks, eliminations', add: ['m2'], hi: ['m2'],
+      body: `<p>Secret roles, the task list and the two task mini-games, the Devil’s kill with a cooldown, bodies and ghosts.</p><p><b>Done when:</b> a Devil can eliminate someone and a ghost can still finish tasks.</p>`,
+      key: 'Now it’s a game, even before there’s talking.' },
+    { short: 'M3', tag: 'TECHNIQUE', title: 'M3: Meetings and winning', add: ['m3'], hi: ['m3'],
+      body: `<p>Report a body, the emergency button, meeting chat, voting, ejection results and all win conditions.</p><p><b>Done when:</b> a whole match can be played start to finish. <b>This is the first real playtest.</b></p>`,
+      key: 'First playable. Playtest before adding anything else.' },
+    { short: 'M4', tag: 'TECHNIQUE', title: 'M4: The Devil’s Plan layer', add: ['m4'], hi: ['m4'],
+      body: `<p>Pieces, double votes, whispers, a series leaderboard in the lobby, plus whichever extra spends survived the decisions.</p>`,
+      key: 'This is the part that makes it ours.' },
+    { short: 'M5', tag: 'TECHNIQUE', title: 'M5: Characters and art', add: ['m5'], hi: ['m5'],
+      body: `<p>Layered characters with the lobby customizer, the map drawn in this style (flat or isometric), sounds and small animations.</p>`,
+      key: 'Art comes after the rules are fun, never before.' },
+    { short: 'M6', tag: 'TECHNIQUE', title: 'M6: Online for real', add: ['m6'], hi: ['m6'],
+      body: `<p>Deploy to a host, add reconnecting when wifi drops, add room codes for separate groups, then playtest with the real group over Discord.</p>`,
+      key: 'Remote play is the goal, so test remotely early and often.' },
+    { short: 'Next', tag: 'RECAP', title: 'What we need to decide next',
+      body: `<ul><li>Reveal the ejected player’s role?</li><li>Flat or isometric map art?</li><li>Which piece spends go into version 1?</li><li>Series format for game night</li><li>Front-only characters, or turn left and right?</li></ul><p>Once these are settled, M1 starts.</p>`,
+      key: 'Small, playable steps. Every milestone ends in something we can try.' },
+  ],
+},
+];
+
+/* ---------- app ---------- */
+const $ = id => document.getElementById(id);
+let part = 0, step = 0;
+const stage = $('stage');
+const DEFS = `<defs>
+  <pattern id="iso" width="48" height="24" patternUnits="userSpaceOnUse"><path d="M0 12 L24 0 L48 12 L24 24 Z" fill="none" stroke="var(--grid)" stroke-width="1"/></pattern>
+  <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" style="fill:var(--ink)"/></marker>
+  <marker id="ahb" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0 L10 5 L0 10 Z" style="fill:var(--red)"/></marker>
+</defs><rect x="-480" y="-290" width="960" height="580" fill="url(#iso)"/>`;
+
+function visibleAt(p, i) {
+  const vis = new Set();
+  for (let k = 0; k <= i; k++) { (p.steps[k].remove || []).forEach(id => vis.delete(id)); (p.steps[k].add || []).forEach(id => vis.add(id)); }
+  return vis;
+}
+PARTS.forEach(p => { p.phase = p.phase || 2; });
+const num = p => `${p.phase}.${PARTS.filter(q => q.phase === p.phase).indexOf(p) + 1}`;
+function store(key, val) { try { if (val === undefined) return JSON.parse(localStorage.getItem(key) || 'null'); localStorage.setItem(key, JSON.stringify(val)); } catch { return null; } }
+
+let unmount = null;
+function drawStage(animate) {
+  if (unmount) { unmount(); unmount = null; }
+  const p = PARTS[part], s = p.steps[step], vis = visibleAt(p, step);
+  const added = new Set(animate ? (s.add || []) : []), hi = new Set(s.hi || []), dim = new Set(s.dim || []);
+  let html = DEFS;
+  for (const [id, e] of Object.entries(p.els)) {
+    if (!vis.has(id)) continue;
+    const cls = ['el', added.has(id) ? 'enter' : '', hi.has(id) ? 'hi' : '', dim.has(id) ? 'dim' : ''].join(' ');
+    html += `<g class="${cls}">${render(e)}</g>`;
+  }
+  stage.innerHTML = html;
+  for (const [id, e] of Object.entries(p.els)) if (vis.has(id) && e.mount) unmount = e.mount(stage);
+}
+
+function renderAll(animate = true) {
+  const p = PARTS[part], s = p.steps[step], n = p.steps.length;
+  document.title = `${p.title} · Devil's Den Blueprint`;
+  let lastPhase = 0;
+  $('parts').innerHTML = PARTS.map((q, i) => {
+    const hdr = q.phase !== lastPhase ? `<div class="phasehdr">${esc(PHASES[q.phase])}</div>` : '';
+    lastPhase = q.phase;
+    return hdr + `<button class="part" data-i="${i}" aria-current="${i === part}"><span class="folder" style="background:var(--${q.folder})"></span>${num(q)} ${esc(q.title)}<span class="n">${q.steps.length}</span></button>`;
+  }).join('');
+  $('partcount').textContent = `${PARTS.length} parts`;
+  $('crumbs').textContent = `${PHASES[p.phase]}  /  ${num(p)} ${p.level}`;
+  $('title').textContent = p.title;
+  $('summary').textContent = p.summary;
+  $('tags').innerHTML = `<span class="chip">${p.mins}</span><span class="chip">${p.level}</span><span class="chip">${n} steps</span>`;
+  $('stats').innerHTML = p.stats.map(([k, v]) => `<div class="stat"><span>${esc(k)}</span><b>${esc(v)}</b></div>`).join('');
+  $('legend').innerHTML = p.legend.map(([c, t]) => `<span><i style="background:${c}"></i>${esc(t)}</span>`).join('');
+  $('legend').hidden = !p.legend.length;
+  $('dots').innerHTML = p.steps.map((q, i) => `<button class="dot ${i < step ? 'done' : ''} ${i === step ? 'cur' : ''}" data-i="${i}" aria-label="Step ${i + 1}: ${esc(q.short)}"><b>${i + 1}</b>${esc(q.short)}</button>`).join('');
+  $('stepof').textContent = `Step ${step + 1} of ${n}`;
+  $('stepno').textContent = `STEP ${step + 1} / ${n}`;
+  $('tag').textContent = s.tag; $('tag').className = 'tag ' + s.tag;
+  $('steptitle').textContent = s.title;
+  $('stepbody').innerHTML = s.body + `<div class="key"><span class="ki" aria-hidden="true">!</span><div><small>KEY IDEA</small>${esc(s.key)}</div></div>`;
+  $('back').disabled = part === 0 && step === 0;
+  const last = step === n - 1;
+  $('nextlabel').textContent = last ? (part < PARTS.length - 1 ? `Next part: ${PARTS[part + 1].title}` : 'Back to start') : `Next: ${p.steps[step + 1].short}`;
+  const saved = store('dd-decisions') || {};
+  $('decisions').innerHTML = p.decisions.map((d, i) => { const id = `dec-${p.id}-${i}`; return `<label for="${id}"><input type="checkbox" id="${id}" ${saved[id] ? 'checked' : ''}> ${esc(d)}</label>`; }).join('');
+  drawStage(animate);
+}
+
+function go(pi, si, animate = true) {
+  part = (pi + PARTS.length) % PARTS.length; step = si;
+  if (location.hash.slice(1) !== PARTS[part].id) history.replaceState(null, '', '#' + PARTS[part].id);
+  renderAll(animate);
+}
+function next() { const n = PARTS[part].steps.length; step < n - 1 ? go(part, step + 1) : go(part + 1, 0); }
+function back() { if (step > 0) go(part, step - 1); else if (part > 0) go(part - 1, PARTS[part - 1].steps.length - 1); }
+
+$('next').onclick = next; $('back').onclick = back;
+$('parts').onclick = e => { const b = e.target.closest('.part'); if (b) go(+b.dataset.i, 0); };
+$('dots').onclick = e => { const b = e.target.closest('.dot'); if (b) go(part, +b.dataset.i); };
+$('decisions').onchange = e => { const saved = store('dd-decisions') || {}; saved[e.target.id] = e.target.checked; store('dd-decisions', saved); };
+document.addEventListener('keydown', e => {
+  if (e.target.closest('input, textarea')) return;
+  if (e.key === 'ArrowRight') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); back(); }
+});
+$('theme').onclick = () => {
+  const root = document.documentElement;
+  const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  root.dataset.theme = dark ? 'light' : 'dark';
+};
+function fromHash() { const i = PARTS.findIndex(p => p.id === location.hash.slice(1)); go(i < 0 ? 0 : i, 0, false); }
+addEventListener('hashchange', fromHash);
+fromHash();
+})();
+</script>
