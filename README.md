@@ -8,7 +8,7 @@ The design lives in [docs/blueprint.html](docs/blueprint.html). Open it in a bro
 
 ```bash
 npm install
-npm run dev      # http://localhost:3000, restarts when server files change
+npm run dev      # landing page at http://localhost:3000, the game at /play
 npm test
 ```
 
@@ -25,7 +25,7 @@ server/
 shared/         used by both server and browser
   settings.js   room limits, game catalog, difficulty tables, looks
   character.js  player character drawing
-public/         the browser app (home, lobby, game screens; games/ has per-game drawing)
+public/         landing page (index.html) and the game (play.html: home, lobby, game screens)
 test/           room logic and end-to-end server tests
 docs/           blueprint
 phase2-den/     early draft of The Den (phase 2). Not wired up and never run.

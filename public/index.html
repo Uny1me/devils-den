@@ -3,15 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Devil's Den · Game Night</title>
+  <title>Devil's Den · Game night for friends</title>
+  <meta name="description" content="Quick brain games you play with friends online, inspired by The Devil's Plan. Open a room, pick the games, play from your phone.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap">
+  <script>try { const t = localStorage.getItem('dd-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch {}</script>
   <link rel="stylesheet" href="/style.css">
 </head>
-<body>
+<body class="landing">
   <header class="top">
-    <a class="brand" href="/" aria-label="Devil's Den home">
+    <a class="brand" href="/" aria-label="Devil's Den home page">
       <svg width="28" height="28" viewBox="-20 -24 40 44" aria-hidden="true">
         <path d="M0 -20 L17 -11 L17 8 L0 17 L-17 8 L-17 -11 Z" fill="var(--rose)" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round"/>
         <path d="M-17 -11 L0 -2 L17 -11 M0 -2 L0 17" fill="none" stroke="var(--ink)" stroke-width="1.8" stroke-linejoin="round"/>
@@ -19,11 +21,52 @@
       </svg>
       <span>Devil's <mark>Den</mark></span>
     </a>
-    <span class="chip" id="roomchip" hidden></span>
-    <span class="status" id="status" role="status"></span>
+    <span class="status"></span>
+    <button class="themebtn" id="theme" type="button"></button>
+    <a class="btn small primary" href="/play">Play</a>
   </header>
-  <main id="app" class="wrap"></main>
-  <div id="toast" class="toast" role="status" hidden></div>
-  <script type="module" src="/app.js"></script>
+
+  <main>
+    <section class="lhero wrap">
+      <span class="eyebrow">Inspired by The Devil’s Plan</span>
+      <h1 class="headline">Outsmart your friends,<br>one game at a time.</h1>
+      <p class="lede">Devil’s Den is a game night of quick brain games you play with friends online. One person opens a room and picks the games. Everyone joins from their own phone, plays a few fast rounds of each, and earns pieces. Most pieces at the end of the night wins.</p>
+      <div class="ctarow">
+        <a class="btn primary cta" href="/play">Host a night</a>
+        <form class="joinform" id="joinform" novalidate>
+          <label class="sr" for="joincode">Room code</label>
+          <input type="text" id="joincode" class="code-input" maxlength="4" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="CODE">
+          <button class="btn cta" type="submit">Join</button>
+        </form>
+      </div>
+      <p class="muted" id="joinhint">No accounts, no downloads. 2–10 players on any phone or laptop.</p>
+    </section>
+
+    <section class="lstage" aria-label="Players wandering around a room with a stack of cubes">
+      <svg id="stage" viewBox="-480 -90 960 580" role="img" aria-label="Animated players walking around the Den"></svg>
+    </section>
+
+    <section class="wrap lsteps" aria-label="How a night works">
+      <article class="panel"><span class="stepn">1</span><h2>Open a room</h2><p>The host gets a 4-letter code to share in the group chat or on a Discord call.</p></article>
+      <article class="panel"><span class="stepn">2</span><h2>Pick the games</h2><p>Choose one or more games, each with its own difficulty and number of rounds.</p></article>
+      <article class="panel"><span class="stepn">3</span><h2>Play for pieces</h2><p>Win a game to earn pieces. The night goes to whoever has the most.</p></article>
+    </section>
+
+    <section class="wrap">
+      <div class="panel lfinal">
+        <div>
+          <h2>Ready for game night?</h2>
+          <p>Cube Count is playable now. Memory Poker is coming next.</p>
+        </div>
+        <div class="ctarow">
+          <a class="btn primary cta" href="/play">Host a night</a>
+          <a class="btn cta" href="/play">Join a room</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="wrap lfoot">Devil’s Den is a fan-made game. It isn’t affiliated with Netflix or The Devil’s Plan.</footer>
+  </main>
+  <script type="module" src="/landing.js"></script>
 </body>
 </html>

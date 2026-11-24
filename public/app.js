@@ -5,6 +5,7 @@ import {
 } from '/shared/settings.js';
 import { characterSVG } from '/shared/character.js';
 import { renderNight, leaveNight } from '/night.js';
+import { initTheme } from '/theme.js';
 
 const $ = sel => document.querySelector(sel);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -297,7 +298,7 @@ document.addEventListener('click', e => {
 });
 
 function copyInvite() {
-  const link = `${location.origin}/?room=${room.code}`;
+  const link = `${location.origin}/play?room=${room.code}`;
   navigator.clipboard?.writeText(link).then(() => toast('Invite link copied.'), () => toast(`Share this link: ${link}`))
     ?? toast(`Share this link: ${link}`);
 }
@@ -308,6 +309,10 @@ function toast(text, bad = false) {
   el.textContent = text; el.classList.toggle('bad', bad); el.hidden = false;
   clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.hidden = true; }, 4000);
 }
+
+initTheme($('#theme'));
+});
+applyTheme();
 
 render();
 connect();

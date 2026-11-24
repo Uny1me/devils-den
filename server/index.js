@@ -17,6 +17,7 @@ async function serveFile(req, res) {
   let path;
   try { path = decodeURIComponent(new URL(req.url, 'http://x').pathname); } catch { res.writeHead(400); return res.end(); }
   if (path === '/') path = '/index.html';
+  else if (!extname(path)) path += '.html'; // /play -> play.html
   const prefix = path.startsWith('/shared/') ? '/shared/' : '/';
   const base = DIRS[prefix];
   const file = normalize(join(base, path.slice(prefix.length)));

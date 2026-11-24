@@ -1,6 +1,6 @@
 // Draws a Cube Count structure that players can turn: drag to spin (free mode) or use 90° buttons (both modes).
 // Each frame: rotate the grid around its middle, project every cube, draw from far to near, only faces that touch air.
-const GOLD = '#f2b630', EDGE = '#6b4510';
+export const GOLD = '#f2b630', EDGE = '#6b4510';
 const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const camera = { theta: Math.PI / 4, elev: Math.PI / 6 };
@@ -23,7 +23,7 @@ function columnHeights(grid, { heights, cubes }) {
   return h;
 }
 
-function draw(H, theta, elev, S, cx, cy) {
+export function drawCubes(H, theta, elev, S, cx, cy) {
   const n = H.length, c = Math.cos(theta), s = Math.sin(theta), cE = Math.cos(elev), sE = Math.sin(elev), off = n / 2;
   const has = (i, j, k) => i >= 0 && j >= 0 && i < n && j < n && k >= 0 && k < H[j][i];
   const P = ([x, y, z]) => { const rx = x * c - y * s, ry = x * s + y * c; return [cx + rx * S, cy + (ry * sE - z * cE) * S]; };
@@ -62,7 +62,7 @@ export function mountCubeView(el, { grid, turning = 'free', heights, cubes }) {
       </div>
     </div>`;
   const svg = el.querySelector('svg'), g = el.querySelector('[data-cubes]');
-  const redraw = () => { g.innerHTML = draw(H, camera.theta, camera.elev, S, 0, cy); };
+  const redraw = () => { g.innerHTML = drawCubes(H, camera.theta, camera.elev, S, 0, cy); };
   redraw();
 
   let raf = 0, drag = null;

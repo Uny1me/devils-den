@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Devil's Den · Game Night</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700;800&display=swap">
+  <script>try { const t = localStorage.getItem('dd-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch {}</script>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="/" aria-label="Devil's Den home page">
+      <svg width="28" height="28" viewBox="-20 -24 40 44" aria-hidden="true">
+        <path d="M0 -20 L17 -11 L17 8 L0 17 L-17 8 L-17 -11 Z" fill="var(--rose)" stroke="var(--ink)" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M-17 -11 L0 -2 L17 -11 M0 -2 L0 17" fill="none" stroke="var(--ink)" stroke-width="1.8" stroke-linejoin="round"/>
+        <path d="M-8 -18 L-11 -27 L-4 -20 M8 -18 L11 -27 L4 -20" fill="none" stroke="var(--ink)" stroke-width="2" stroke-linejoin="round"/>
+      </svg>
+      <span>Devil's <mark>Den</mark></span>
+    </a>
+    <span class="chip" id="roomchip" hidden></span>
+    <span class="status" id="status" role="status"></span>
+    <button class="themebtn" id="theme" type="button"></button>
+  </header>
+  <main id="app" class="wrap"></main>
+  <div id="toast" class="toast" role="status" hidden></div>
+  <script type="module" src="/app.js"></script>
+</body>
+</html>

@@ -36,6 +36,8 @@ test('serves the page and the shared files', async () => {
   const base = `http://localhost:${srv.port}`;
   assert.equal((await fetch(base + '/')).status, 200);
   assert.equal((await fetch(base + '/app.js')).status, 200);
+  assert.equal((await fetch(base + '/play')).status, 200);
+  assert.match(await (await fetch(base + '/')).text(), /Inspired by The Devil’s Plan/);
   assert.equal((await fetch(base + '/shared/settings.js')).status, 200);
   for (const path of ['/../server/room.js', '/shared/%2e%2e/server/room.js', '/shared/..%2fserver/room.js', '/..%2fpackage.json']) {
     assert.ok([403, 404].includes((await fetch(base + path)).status), `${path} must not be served`);
