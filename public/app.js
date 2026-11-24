@@ -4,6 +4,7 @@ import {
   estimateSecs, formatMins, cleanLook, randomLook,
 } from '/shared/settings.js';
 import { characterSVG } from '/shared/character.js';
+import { renderNight, leaveNight } from '/night.js';
 
 const $ = sel => document.querySelector(sel);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -171,7 +172,9 @@ function gameCard(id, index, host) {
         ${host && many ? `<span class="order"><button class="btn small" data-act="up" data-game="${id}" ${index === 0 ? 'disabled' : ''} aria-label="Play ${g.name} earlier">↑</button><button class="btn small" data-act="down" data-game="${id}" ${index === room.playlist.length - 1 ? 'disabled' : ''} aria-label="Play ${g.name} later">↓</button></span>` : ''}
       </div>`;
   }
-  const toggle = host
+  const toggle = !g.ready
+    ? '<span class="badge off">coming soon</span>'
+    : host
     ? `<button class="btn small ${on ? 'primary' : ''}" data-act="toggle" data-game="${id}" aria-pressed="${on}">${on ? `✓ Game ${index + 1}` : 'Add'}</button>`
     : `<span class="badge ${on ? 'you' : 'off'}">${on ? `game ${index + 1}` : 'not tonight'}</span>`;
   return `<article class="game ${on ? 'on' : ''}"><div class="ghead">${gameIcon(id)}<div><div class="gname">${g.name}</div><div class="gblurb">${g.blurb}</div></div>${toggle}</div>${body}</article>`;
@@ -207,16 +210,6 @@ function lobbyHTML() {
     </div>`;
 }
 
-function runningHTML() {
-  return `<section class="panel">
-      <span class="eyebrow">Room ${esc(room.code)} · tonight</span>
-      <h1>The night has started</h1>
-      <ol class="runlist">${room.playlist.map(e => `<li>${gameIcon(e.game)}<div><b>${GAMES[e.game].name}</b><div class="muted">${DIFFICULTY_LABEL[e.difficulty]} · ${LENGTHS[e.length].rounds} rounds · ${formatMins(estimateSecs(e))}</div></div></li>`).join('')}</ol>
-      <p class="muted">The games themselves arrive in G2. This screen confirms the same playlist reached every player.</p>
-      ${isHost() ? '<button class="btn" data-act="lobby">Back to the lobby</button>' : ''}
-    </section>`;
-}
-
 function editPlaylist(fn) {
   const list = room.playlist.map(e => ({ ...e }));
   fn(list);
@@ -240,11 +233,15 @@ function render() {
       renderHomePreview();
     }
     updateHome();
-  } else {
+  } else if (next === 'lobby') {
     const scrollY = window.scrollY;
-    $('#app').innerHTML = next === 'lobby' ? lobbyHTML() : runningHTML();
+    $('#app').innerHTML = lobbyHTML();
     if (screen === next) window.scrollTo(0, scrollY);
+  } else {
+    if (screen !== 'running') { $('#app').innerHTML = '<div id="night" class="night"></div>'; window.scrollTo(0, 0); }
+    renderNight($('#night'), room, send);
   }
+  if (screen === 'running' && next !== 'running') leaveNight();
   screen = next;
 }
 

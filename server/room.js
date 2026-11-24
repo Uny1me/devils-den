@@ -2,8 +2,10 @@
 // No networking in here: each player has a `send(message)` function, so tests can use fakes.
 import { randomBytes, randomInt } from 'node:crypto';
 import { DIFFICULTIES, GAMES, LENGTHS, ROOM, SHIRTS, cleanLook } from '../shared/settings.js';
+import { RoomError } from './errors.js';
+import { Night, MODULES } from './engine.js';
 
-export class RoomError extends Error {}
+export { RoomError };
 
 export class Registry {
   constructor() { this.rooms = new Map(); }
@@ -25,7 +27,7 @@ export class Registry {
   }
 
   get(code) { return this.rooms.get(String(code || '').trim().toUpperCase()); }
-  remove(room) { this.rooms.delete(room.code); }
+  remove(room) { room.night?.stop(); this.rooms.delete(room.code); }
 }
 
 export class Room {
@@ -36,6 +38,7 @@ export class Room {
     this.hostId = null;
     this.phase = 'lobby'; // 'lobby' | 'running'
     this.playlist = []; // [{ game, difficulty, length }]
+    this.night = null; // the running Night (engine.js) while phase is 'running'
     this.nextId = 1;
   }
 
@@ -125,6 +128,7 @@ export class Room {
     const seen = new Set();
     const clean = list.map(e => {
       if (!e || !GAMES[e.game]) throw new RoomError('Unknown game in the playlist.');
+      if (!MODULES[e.game]) throw new RoomError(`${GAMES[e.game].name} isn’t playable yet.`);
       if (seen.has(e.game)) throw new RoomError('Each game can only be in the playlist once.');
       seen.add(e.game);
       if (!DIFFICULTIES.includes(e.difficulty)) throw new RoomError('Pick Easy, Medium or Hard.');
@@ -147,14 +151,34 @@ export class Room {
     if (this.phase !== 'lobby') throw new RoomError('The night has already started.');
     const problem = this.startProblem();
     if (problem) throw new RoomError(problem);
-    this.phase = 'running'; // G2: hand the playlist to the game engine here
-    this.broadcast();
+    const players = [...this.players.values()].filter(q => q.connected).map(q => q.id);
+    this.phase = 'running';
+    this.night = new Night({
+      playlist: this.playlist.map(e => ({ ...e })),
+      playerIds: players,
+      activeIds: () => [...this.players.values()].filter(q => q.connected).map(q => q.id),
+      onChange: () => this.broadcast(),
+    });
+    this.night.begin();
   }
 
   backToLobby(p) {
     this.requireHost(p);
+    this.night?.stop();
+    this.night = null;
     this.phase = 'lobby';
     this.broadcast();
+  }
+
+  answer(p, value) {
+    if (!this.night) throw new RoomError('No game is running.');
+    this.night.input(p.id, value);
+  }
+
+  skip(p) {
+    this.requireHost(p);
+    if (!this.night) throw new RoomError('No game is running.');
+    this.night.skip();
   }
 
   requireHost(p) {
@@ -171,6 +195,7 @@ export class Room {
       players: [...this.players.values()].map(p => ({ id: p.id, name: p.name, look: p.look, color: p.color, connected: p.connected })),
       playlist: this.playlist,
       startProblem: this.startProblem(),
+      night: this.night ? this.night.stateFor(id) : null,
     };
   }
 

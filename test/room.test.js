@@ -10,7 +10,8 @@ const setup = (n = 1) => {
   return { reg, room, ps };
 };
 const cube = { game: 'cube-count', difficulty: 'medium', length: 'standard' };
-const poker = { game: 'memory-poker', difficulty: 'hard', length: 'short' };
+const cubeHard = { game: 'cube-count', difficulty: 'hard', length: 'short' };
+const poker = { game: 'memory-poker', difficulty: 'hard', length: 'short' }; // not playable until G3
 
 test('room codes are 4 readable letters and unique', () => {
   const reg = new Registry();
@@ -53,13 +54,14 @@ test('room is full at the max', () => {
 test('only the host can edit the playlist, and it is validated', () => {
   const { room, ps: [host, guest] } = setup(2);
   assert.throws(() => room.setPlaylist(guest, [cube]), /Only the host/);
-  room.setPlaylist(host, [cube, poker]);
-  assert.deepEqual(room.playlist, [cube, poker]);
+  room.setPlaylist(host, [cube]);
+  assert.deepEqual(room.playlist, [cube]);
+  assert.throws(() => room.setPlaylist(host, [cube, poker]), /isn’t playable yet/);
   assert.throws(() => room.setPlaylist(host, [cube, cube]), /only be in the playlist once/);
   assert.throws(() => room.setPlaylist(host, [{ ...cube, difficulty: 'insane' }]), RoomError);
   assert.throws(() => room.setPlaylist(host, [{ ...cube, length: 'forever' }]), RoomError);
   assert.throws(() => room.setPlaylist(host, [{ game: 'chess', difficulty: 'easy', length: 'short' }]), /Unknown game/);
-  assert.deepEqual(room.playlist, [cube, poker], 'a rejected edit leaves the playlist alone');
+  assert.deepEqual(room.playlist, [cube], 'a rejected edit leaves the playlist alone');
 });
 
 test('start needs at least one game and two players online', () => {
@@ -72,19 +74,21 @@ test('start needs at least one game and two players online', () => {
   assert.throws(() => room.start(guest), /Only the host/);
   room.start(host);
   assert.equal(room.phase, 'running');
+  assert.equal(room.stateFor(guest.id).night.stage, 'intro');
   assert.throws(() => room.addPlayer({ name: 'late', send: inbox() }), /already started/);
   room.backToLobby(host);
   assert.equal(room.phase, 'lobby');
+  assert.equal(room.night, null);
 });
 
 test('everyone gets the room state, with their own id', () => {
   const { room, ps: [a, b] } = setup(2);
-  room.setPlaylist(a, [poker]);
+  room.setPlaylist(a, [cubeHard]);
   const sa = a.send.last(), sb = b.send.last();
   assert.equal(sa.t, 'room');
   assert.equal(sa.room.you, a.id);
   assert.equal(sb.room.you, b.id);
-  assert.deepEqual(sb.room.playlist, [poker]);
+  assert.deepEqual(sb.room.playlist, [cubeHard]);
   assert.ok(!('token' in sa.room.players[0]), 'tokens are never shared');
 });
 

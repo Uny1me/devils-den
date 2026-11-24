@@ -29,6 +29,7 @@ export const GAMES = {
   'cube-count': {
     name: 'Cube Count',
     blurb: 'Turn a stack of cubes around, then guess how many there are.',
+    ready: true,
     hue: 'blue',
     difficulty: {
       easy: { grid: 3, maxHeight: 3, cubes: [7, 12], lookSecs: 25, turning: 'free' },
@@ -40,6 +41,7 @@ export const GAMES = {
   'memory-poker': {
     name: 'Memory Poker',
     blurb: 'Memorize 12 cards by letter, then pick two for the best poker hand.',
+    ready: false, // G3
     hue: 'rose',
     difficulty: {
       easy: { memorizeSecs: 30, pickSecs: 25 },

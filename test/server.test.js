@@ -64,18 +64,26 @@ test('four players: create, join, set a playlist, start', async () => {
   guests[0].send({ t: 'playlist', playlist: [{ game: 'cube-count', difficulty: 'easy', length: 'short' }] });
   assert.match((await guests[0].next(m => m.t === 'error')).text, /Only the host/);
 
-  host.send({ t: 'playlist', playlist: [
-    { game: 'memory-poker', difficulty: 'hard', length: 'short' },
-    { game: 'cube-count', difficulty: 'medium', length: 'standard' },
-  ] });
+  host.send({ t: 'playlist', playlist: [{ game: 'cube-count', difficulty: 'easy', length: 'short' }] });
   await settle();
   const seen = guests[2].latestRoom();
-  assert.deepEqual(seen.playlist.map(e => e.game), ['memory-poker', 'cube-count']);
+  assert.deepEqual(seen.playlist.map(e => e.game), ['cube-count']);
   assert.equal(seen.startProblem, null);
 
   host.send({ t: 'start' });
   await settle();
-  for (const c of [host, ...guests]) assert.equal(c.latestRoom().phase, 'running');
+  for (const c of [host, ...guests]) assert.equal(c.latestRoom().night.stage, 'intro');
+
+  // host skips the intro; round 1 opens with the look phase, and nobody is sent the count
+  host.send({ t: 'skip' });
+  await settle();
+  const look = guests[0].latestRoom().night.round;
+  assert.equal(look.phase, 'look');
+  assert.ok(look.view.cubes.length > 0);
+  assert.ok(!('count' in look.view) && !('heights' in look.view));
+
+  guests[1].send({ t: 'answer', value: 9 });
+  assert.match((await guests[1].next(m => m.t === 'error')).text, /aren’t open/);
   for (const c of [host, ...guests, bad]) c.ws.close();
 });
 

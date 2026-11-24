@@ -65,6 +65,8 @@ export function startServer(port = Number(process.env.PORT) || 3000) {
           case 'playlist': room.setPlaylist(me, m.playlist); break;
           case 'start': room.start(me); break;
           case 'lobby': room.backToLobby(me); break;
+          case 'answer': room.answer(me, m.value); break;
+          case 'skip': room.skip(me); break;
           case 'leave': room.removePlayer(me.id); room = me = null; send({ t: 'left' }); break;
         }
       } catch (err) {
